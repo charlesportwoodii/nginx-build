@@ -18,8 +18,9 @@ if [ ! -d /etc/nginx/conf/conf.d ]; then
 	$(which mkdir) /etc/nginx/conf/conf.d
 fi
 
-wget https://raw.github.com/charlesportwoodii/nginx-build/master/init-nginx -O /etc/init.d/nginx
+$(which wget) https://raw.github.com/charlesportwoodii/nginx-build/master/init-nginx -O /etc/init.d/nginx
 
+$(which ln) -s /etc/nginx/sbin/nginx /usr/bin/nginx
 $(which chmod) a+x /etc/init.d/nginx
 $(which update-rc.d) nginx defaults
 $(which service) nginx start
