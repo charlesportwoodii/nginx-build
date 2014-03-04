@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set +e
+
+if [ ! -f /etc/nginx/conf/nginx.conf ]; then
+	$(which cp) /etc/nginx/conf/nginx.conf.default /etc/nginx/conf/nginx.conf
+fi
+
+if [ ! -f /etc/nginx/conf/fastcgi.conf ]; then
+	$(which cp) /etc/nginx/conf/fastcgi.conf.default /etc/nginx/conf/fastcgi.conf
+fi
+
+if [ ! -f /etc/nginx/conf/fastcgi_params.conf ]; then
+	$(which cp) /etc/nginx/conf/fastcgi_params.default /etc/nginx/conf/fastcgi_params
+fi
+
+if [ ! -d /etc/nginx/conf/conf.d ]; then
+	$(which mkdir) /etc/nginx/conf/conf.d
+fi
+
+$(which chmod) a+x /etc/init.d/nginx
+$(which update-rc.d) nginx defaults
+$(which service) nginx start
+
+exit 0
