@@ -54,8 +54,11 @@ patch -p1 < /tmp/nginx-$VERSION/modules/nginx_tcp_proxy_module/tcp.patch
 cp $SCRIPTPATH/*-pak .
 cp -R $SCRIPTPATH/conf .
 cp $SCRIPTPATH/init-nginx .
+cp $SCRIPTPATH/setup .
 
 ## Make
 make -j2
 sudo make install
+# sudo checkinstall sh /tmp/nginx-$VERSION/setup
+# libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit
 #bzr dh-make nginx-1.5.11 nginx-1.5.11.tar.gz
