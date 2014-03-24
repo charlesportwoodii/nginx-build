@@ -34,11 +34,11 @@ git clone https://github.com/bpaquet/ngx_http_enhanced_memcached_module
 git clone https://github.com/agentzh/redis2-nginx-module
 
 # Pagespeed
-wget https://github.com/pagespeed/ngx_pagespeed/archive/v1.7.30.3-beta.zip
-unzip v1.7.30.3-beta.zip
-cd ngx_pagespeed-1.7.30.3-beta/
-wget https://dl.google.com/dl/page-speed/psol/1.7.30.3.tar.gz
-tar -xzvf 1.7.30.3.tar.gz
+wget https://github.com/pagespeed/ngx_pagespeed/archive/v1.7.30.4-beta.zip
+unzip v1.7.30.4-beta.zip
+cd ngx_pagespeed-1.7.30.4-beta/
+wget https://dl.google.com/dl/page-speed/psol/1.7.30.4.tar.gz
+tar -xzvf 1.7.30.4.tar.gz
 cd ..
 
 # TCP Proxy
@@ -48,7 +48,7 @@ cd /tmp/nginx-$VERSION
 patch -p1 < /tmp/nginx-$VERSION/modules/nginx_tcp_proxy_module/tcp.patch
 
 ## Configure
-./configure --with-http_geoip_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_spdy_module --prefix=/etc/nginx --error-log-path=/var/log/nginx/error.log --pid-path=/var/run/nginx.pid --http-log-path=/var/log/nginx/access.log --with-ipv6 --with-http_realip_module --with-http_mp4_module --with-http_addition_module --add-module=modules/ngx_http_enhanced_memcached_module --add-module=modules/redis2-nginx-module --add-module=modules/ngx_pagespeed-1.7.30.3-beta --add-module=modules/ngx_devel_kit --add-module=modules/lua-nginx-module --add-module=modules/nginx_tcp_proxy_module
+./configure --with-http_geoip_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_spdy_module --prefix=/etc/nginx --error-log-path=/var/log/nginx/error.log --pid-path=/var/run/nginx.pid --http-log-path=/var/log/nginx/access.log --with-ipv6 --with-http_realip_module --with-http_mp4_module --with-http_addition_module --add-module=modules/ngx_http_enhanced_memcached_module --add-module=modules/redis2-nginx-module --add-module=modules/ngx_pagespeed-1.7.30.4-beta --add-module=modules/ngx_devel_kit --add-module=modules/lua-nginx-module --add-module=modules/nginx_tcp_proxy_module
 
 ## Copy Files
 cp $SCRIPTPATH/*-pak .
