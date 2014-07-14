@@ -3,13 +3,18 @@
 
 # Get the current script path
 SCRIPTPATH=`pwd -P`
-
+PCREVERSION=8.35
 VERSION=$1
 # Build the package in tmp
 cd /tmp
 rm -rf /tmp/nginx* /tmp/ngx*
 wget http://nginx.org/download/nginx-$VERSION.tar.gz
 $(which tar) -xf /tmp/nginx-$VERSION.tar.gz
+
+## Let Nginx build PCRE
+cd /tmp
+wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.35.tar.gz
+tar -xf pcre-8.35.tar.gz
 
 ## Add the necessary modules
 mkdir -p /tmp/nginx-$VERSION/modules
@@ -50,7 +55,7 @@ cd ..
 ## Configure
 
 cd /tmp/nginx-$VERSION/
-./configure --with-http_geoip_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_spdy_module --prefix=/etc/nginx --error-log-path=/var/log/nginx/error.log --pid-path=/var/run/nginx.pid --http-log-path=/var/log/nginx/access.log --with-ipv6 --with-http_realip_module --with-http_mp4_module --with-http_addition_module --add-module=modules/ngx_http_enhanced_memcached_module --add-module=modules/redis2-nginx-module --add-module=modules/ngx_pagespeed-1.8.31.4-beta --add-module=modules/ngx_devel_kit --add-module=modules/lua-nginx-module
+./configure --with-http_geoip_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_spdy_module --prefix=/etc/nginx --error-log-path=/var/log/nginx/error.log --pid-path=/var/run/nginx.pid --http-log-path=/var/log/nginx/access.log --with-ipv6 --with-http_realip_module --with-http_mp4_module --with-http_addition_module --add-module=modules/ngx_http_enhanced_memcached_module --add-module=modules/redis2-nginx-module --add-module=modules/ngx_pagespeed-1.8.31.4-beta --add-module=modules/ngx_devel_kit --add-module=modules/lua-nginx-module --with-pcre=/tmp/pcre-$PCREVERSION
 
 ## Copy Files
 cp $SCRIPTPATH/*-pak .
