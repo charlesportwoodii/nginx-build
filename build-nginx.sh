@@ -16,6 +16,11 @@ cd /tmp
 wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.35.tar.gz
 tar -xf pcre-8.35.tar.gz
 
+# Install the latest version of OpenSSL rather than using the libaries provided with the host OS
+cd /tmp/nginx-$VERSION
+wget https://www.openssl.org/source/openssl-1.0.1i.tar.gz
+tar -xf openssl-1.0.1i.tar.gz
+
 ## Add the necessary modules
 mkdir -p /tmp/nginx-$VERSION/modules
 cd /tmp/nginx-$VERSION/modules
@@ -46,6 +51,10 @@ wget https://dl.google.com/dl/page-speed/psol/1.8.31.4.tar.gz
 tar -xzvf 1.8.31.4.tar.gz
 cd ..
 
+# Nginx Length Hiding (BREACH ATTACK Mitigation)
+wget https://github.com/nulab/nginx-length-hiding-filter-module/archive/master.zip
+unzip master.zip
+
 # TCP Proxy
 #git clone https://github.com/yaoweibin/nginx_tcp_proxy_module
 
@@ -55,7 +64,7 @@ cd ..
 ## Configure
 
 cd /tmp/nginx-$VERSION/
-./configure --with-http_geoip_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_spdy_module --prefix=/etc/nginx --error-log-path=/var/log/nginx/error.log --pid-path=/var/run/nginx.pid --http-log-path=/var/log/nginx/access.log --with-ipv6 --with-http_realip_module --with-http_mp4_module --with-http_addition_module --add-module=modules/ngx_http_enhanced_memcached_module --add-module=modules/redis2-nginx-module --add-module=modules/ngx_pagespeed-1.8.31.4-beta --add-module=modules/ngx_devel_kit --add-module=modules/lua-nginx-module --with-pcre=/tmp/pcre-$PCREVERSION
+./configure --with-http_geoip_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_spdy_module --prefix=/etc/nginx --error-log-path=/var/log/nginx/error.log --pid-path=/var/run/nginx.pid --http-log-path=/var/log/nginx/access.log --with-ipv6 --with-http_realip_module --with-http_mp4_module --with-http_addition_module --add-module=modules/ngx_http_enhanced_memcached_module --add-module=modules/redis2-nginx-module --add-module=modules/ngx_pagespeed-1.8.31.4-beta --add-module=modules/ngx_devel_kit --add-module=modules/lua-nginx-module --add-module=modules/nginx-length-hiding-filter-module-master --with-pcre=/tmp/pcre-$PCREVERSION --with-openssl=openssl-1.0.1i --with-openssl-opt="enable-ec_nistp_64_gcc_128"
 
 ## Copy Files
 cp $SCRIPTPATH/*-pak .
