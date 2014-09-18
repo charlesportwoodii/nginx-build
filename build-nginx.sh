@@ -29,7 +29,7 @@ cd /tmp/nginx-$VERSION/modules
 # Nginx Lua Module
 git clone https://github.com/chaoslawful/lua-nginx-module
 cd lua-nginx-module
-git checkout v0.9.12 
+git checkout master 
 cd ..
 
 # Nginx Devel Kit
