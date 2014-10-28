@@ -15,14 +15,22 @@ if [ ! -f /etc/nginx/conf/fastcgi_params.conf ]; then
 fi
 
 if [ ! -d /etc/nginx/conf/conf.d ]; then
-	$(which mkdir) /etc/nginx/conf/conf.d
+	$(which mkdir) -p /etc/nginx/conf/conf.d
 fi
 
 $(which wget) https://raw.github.com/charlesportwoodii/nginx-build/master/init-nginx -O /etc/init.d/nginx
 
-$(which ln) -s /etc/nginx/sbin/nginx /usr/bin/nginx
+if [ ! -f /usr/bin/nginx ]; then
+	$(which ln) -s /etc/nginx/sbin/nginx /usr/bin/nginx
+fi
+
 $(which chmod) a+x /etc/init.d/nginx
-$(which update-rc.d) nginx defaults
+
+if [ ! -f /etc/init.d/nginx ]; then
+	$(which update-rc.d) nginx defaults
+fi
+
+$(which killall) nginx
 $(which service) nginx start
 
 exit 0

@@ -4,6 +4,7 @@
 # Get the current script path
 SCRIPTPATH=`pwd -P`
 PCREVERSION=8.35
+OPENSSLVERSION=1.0.1j
 VERSION=$1
 PAGESPEED_VERSION=1.8.31.4
 # Build the package in tmp
@@ -14,13 +15,13 @@ $(which tar) -xf /tmp/nginx-$VERSION.tar.gz
 
 ## Let Nginx build PCRE
 cd /tmp
-wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.35.tar.gz
-tar -xf pcre-8.35.tar.gz
+wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$PCREVERSION.tar.gz
+tar -xf pcre-$PCREVERSION.tar.gz
 
 # Install the latest version of OpenSSL rather than using the libaries provided with the host OS
 cd /tmp/nginx-$VERSION
-wget https://www.openssl.org/source/openssl-1.0.1i.tar.gz
-tar -xf openssl-1.0.1i.tar.gz
+wget https://www.openssl.org/source/openssl-$OPENSSLVERSION.tar.gz
+tar -xf openssl-$OPENSSLVERSION.tar.gz
 
 ## Add the necessary modules
 mkdir -p /tmp/nginx-$VERSION/modules
@@ -59,7 +60,7 @@ unzip master.zip
 ## Configure
 
 cd /tmp/nginx-$VERSION/
-./configure --with-http_geoip_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_spdy_module --prefix=/etc/nginx --error-log-path=/var/log/nginx/error.log --pid-path=/var/run/nginx.pid --http-log-path=/var/log/nginx/access.log --with-ipv6 --with-http_realip_module --with-http_mp4_module --with-http_addition_module --add-module=modules/ngx_http_enhanced_memcached_module --add-module=modules/redis2-nginx-module --add-module=modules/ngx_pagespeed-1.8.31.4-beta --add-module=modules/ngx_devel_kit --add-module=modules/lua-nginx-module --add-module=modules/nginx-length-hiding-filter-module-master --with-pcre=/tmp/pcre-$PCREVERSION --with-openssl=openssl-1.0.1i --with-openssl-opt="enable-ec_nistp_64_gcc_128"
+./configure --with-http_geoip_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_spdy_module --prefix=/etc/nginx --error-log-path=/var/log/nginx/error.log --pid-path=/var/run/nginx.pid --http-log-path=/var/log/nginx/access.log --with-ipv6 --with-http_realip_module --with-http_mp4_module --with-http_addition_module --add-module=modules/ngx_http_enhanced_memcached_module --add-module=modules/redis2-nginx-module --add-module=modules/ngx_pagespeed-$PAGESPEED_VERSION-beta --add-module=modules/ngx_devel_kit --add-module=modules/lua-nginx-module --add-module=modules/nginx-length-hiding-filter-module-master --with-pcre=/tmp/pcre-$PCREVERSION --with-openssl=openssl-$OPENSSLVERSION --with-openssl-opt="enable-ec_nistp_64_gcc_128"
 
 ## Copy Files
 cp $SCRIPTPATH/*-pak .
