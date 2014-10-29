@@ -71,6 +71,8 @@ cp $SCRIPTPATH/setup .
 ## Make
 make -j2
 sudo make install
-# sudo checkinstall sh /tmp/nginx-$VERSION/setup
-# libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit
-#bzr dh-make nginx-1.5.11 nginx-1.5.11.tar.gz
+
+# Check Install autobuild
+
+cd /tmp/nginx-$VERSION
+sudo checkinstall -D -pkgname nginx-mainline  -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "nginx-mainline, nginx-1.7"  -requires "libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
