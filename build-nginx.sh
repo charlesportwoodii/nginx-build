@@ -4,8 +4,14 @@
 # Get the current script path
 SCRIPTPATH=`pwd -P`
 PCREVERSION=8.35
-OPENSSLVERSION=1.0.1j
+OPENSSLVERSION=1.0.1k
 VERSION=$1
+if [ -z "$2" ]
+then
+	RELEASE_VER=1;
+else
+	RELEASE_VER=$2;
+fi
 PAGESPEED_VERSION=1.8.31.4
 RELEASE=$(lsb_release --codename | cut -f2)
 
@@ -77,7 +83,5 @@ sudo make install
 # Check Install autobuild
 
 cd /tmp/nginx-$VERSION
-sudo checkinstall -D -pkgname nginx-mainline  -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "nginx-mainline, nginx-1.7"  -requires "libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
+sudo checkinstall -D -pkgname nginx-mainline -pkgrelease $RELEASE_VER -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "nginx-mainline, nginx-1.7"  -requires "libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
 
-# Move the file to the release section
-mv /tmp/nginx-mainline_$VERSION-1_amd64.deb nginx-mainline_$VERSION-1_amd64_$RELEASE.deb
