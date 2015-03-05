@@ -26,9 +26,7 @@ fi
 
 $(which chmod) a+x /etc/init.d/nginx
 
-if [ ! -f /etc/init.d/nginx ]; then
-	$(which update-rc.d) nginx defaults
-fi
+$(which update-rc.d) nginx defaults
 
 $(which killall) nginx
 $(which service) nginx start
