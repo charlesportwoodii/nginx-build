@@ -4,7 +4,7 @@
 # Get the current script path
 SCRIPTPATH=`pwd -P`
 PCREVERSION=8.35
-OPENSSLVERSION=1.0.1k
+OPENSSLVERSION=1.0.1m
 VERSION=$1
 if [ -z "$2" ]
 then
@@ -12,7 +12,7 @@ then
 else
 	RELEASE_VER=$2;
 fi
-PAGESPEED_VERSION=1.8.31.4
+PAGESPEED_VERSION=1.9.32.3
 RELEASE=$(lsb_release --codename | cut -f2)
 
 # Build the package in tmp
