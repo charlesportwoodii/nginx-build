@@ -84,4 +84,4 @@ sudo make install
 
 cd /tmp/nginx-$VERSION
 sudo checkinstall -D -pkgname nginx-mainline -pkgrelease $RELEASE_VER -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "nginx-mainline, nginx-1.7"  -requires "libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
-
+mv /tmp/nginx-mainline_$VERSION-{$RELEASE_VER}_amd64.deb /tmp/nginx-mainline_$VERSION-{$RELEASE_VER}_amd64_$RELEASE.deb
