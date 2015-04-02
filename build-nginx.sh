@@ -4,15 +4,15 @@
 # Get the current script path
 SCRIPTPATH=`pwd -P`
 PCREVERSION=8.36
-OPENSSLVERSION=1.0.1m
+OPENSSLVERSION=1.0.2a
+PAGESPEED_VERSION=1.9.32.3
 VERSION=$1
 if [ -z "$2" ]
 then
-	RELEASE_VER=1;
+	RELEASEVER=1;
 else
-	RELEASE_VER=$2;
+	RELEASEVER=$2;
 fi
-PAGESPEED_VERSION=1.9.32.3
 RELEASE=$(lsb_release --codename | cut -f2)
 
 # Build the package in tmp
@@ -30,6 +30,16 @@ tar -xf pcre-$PCREVERSION.tar.gz
 cd /tmp/nginx-$VERSION
 wget https://www.openssl.org/source/openssl-$OPENSSLVERSION.tar.gz
 tar -xf openssl-$OPENSSLVERSION.tar.gz
+
+# Apply Cloudflare Chacha20-Poly1305 patch to OpenSSL
+cd openssl-$OPENSSLVERSION
+git clone https://github.com/cloudflare/sslconfig
+cp sslconfig/patches/openssl__chacha20_poly1305_cf.patch .
+patch -p1 < openssl__chacha20_poly1305_cf.patch
+
+./config --prefix=/tmp/nginx\-$VERSION/openssl\-$OPENSSLVERSION/.openssl no-shared enable-ec_nistp_64_gcc_128 enable-tlsext
+make depend
+cd ..
 
 ## Add the necessary modules
 mkdir -p /tmp/nginx-$VERSION/modules
@@ -65,10 +75,38 @@ cd ..
 wget https://github.com/nulab/nginx-length-hiding-filter-module/archive/master.zip
 unzip master.zip
 
-## Configure
+# Nginx Cache Purge Module
+wget https://github.com/FRiCKLE/ngx_cache_purge/archive/2.3.zip
+unzip 2.3.zip
 
+## Configure
 cd /tmp/nginx-$VERSION/
-./configure --with-http_geoip_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_spdy_module --prefix=/etc/nginx --error-log-path=/var/log/nginx/error.log --pid-path=/var/run/nginx.pid --http-log-path=/var/log/nginx/access.log --with-ipv6 --with-http_realip_module --with-http_mp4_module --with-http_addition_module --add-module=modules/ngx_http_enhanced_memcached_module --add-module=modules/redis2-nginx-module --add-module=modules/ngx_pagespeed-$PAGESPEED_VERSION-beta --add-module=modules/ngx_devel_kit --add-module=modules/lua-nginx-module --add-module=modules/nginx-length-hiding-filter-module-master --with-pcre=/tmp/pcre-$PCREVERSION --with-openssl=openssl-$OPENSSLVERSION --with-openssl-opt="enable-ec_nistp_64_gcc_128"
+./configure \
+		--with-http_geoip_module \
+		--with-http_ssl_module \
+		--with-http_gzip_static_module \
+		--with-http_stub_status_module \
+		--with-http_spdy_module \
+		--with-http_sub_module \
+		--prefix=/etc/nginx \
+		--sbin-path=/usr/bin/nginx \
+		--error-log-path=/var/log/nginx/error.log \
+		--pid-path=/var/run/nginx.pid \
+		--http-log-path=/var/log/nginx/access.log \
+		--with-ipv6 \
+		--with-http_realip_module \
+		--with-http_mp4_module \
+		--with-http_addition_module \
+		--add-module=modules/ngx_http_enhanced_memcached_module \
+		--add-module=modules/redis2-nginx-module \
+		--add-module=modules/ngx_devel_kit \
+		--add-module=modules/lua-nginx-module \
+		--add-module=modules/nginx-length-hiding-filter-module-master \
+		--add-module=modules/ngx_cache_purge-2.3 \
+		--add-module=modules/ngx_pagespeed-"$PAGESPEED_VERSION"-beta \
+		--with-pcre=/tmp/pcre-"$PCREVERSION" \
+		--with-openssl=openssl-"$OPENSSLVERSION" \
+		--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext"
 
 ## Copy Files
 cp $SCRIPTPATH/*-pak .
@@ -77,11 +115,12 @@ cp $SCRIPTPATH/init-nginx .
 cp $SCRIPTPATH/setup .
 
 ## Make
-make -j2
+make
 sudo make install
 
 # Check Install autobuild
 
 cd /tmp/nginx-$VERSION
-sudo checkinstall -D -pkgname nginx-mainline -pkgrelease $RELEASE_VER -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "nginx-mainline, nginx-1.7"  -requires "libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
-mv /tmp/nginx-mainline_$VERSION-{$RELEASE_VER}_amd64.deb /tmp/nginx-mainline_$VERSION-{$RELEASE_VER}_amd64_$RELEASE.deb
+sudo checkinstall -D -pkgname nginx-mainline -pkgrelease $RELEASEVER -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "nginx-mainline, nginx-1.7"  -requires "libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
+
+mv /tmp/nginx-mainline_"$VERSION"-"$RELEASEVER"_amd64.deb /tmp/nginx-mainline_"$VERSION"-"$RELEASEVER"_amd64_"$RELEASE".deb

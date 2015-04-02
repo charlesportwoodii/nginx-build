@@ -11,7 +11,7 @@
 ### END INIT INFO
 
 PATH=/etc/nginx/sbin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/etc/nginx/sbin/nginx
+DAEMON=/usr/bin/nginx
 NAME=nginx
 DESC=nginx
 

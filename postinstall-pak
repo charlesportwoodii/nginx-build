@@ -20,10 +20,6 @@ fi
 
 $(which wget) https://raw.github.com/charlesportwoodii/nginx-build/master/init-nginx -O /etc/init.d/nginx
 
-if [ ! -f /usr/bin/nginx ]; then
-	$(which ln) -s /etc/nginx/sbin/nginx /usr/bin/nginx
-fi
-
 $(which chmod) a+x /etc/init.d/nginx
 
 $(which update-rc.d) nginx defaults
