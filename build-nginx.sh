@@ -15,6 +15,18 @@ else
 fi
 RELEASE=$(lsb_release --codename | cut -f2)
 
+version=$(echo $VERSION | grep -o '[^-]*$')
+major=$(echo $version | cut -d. -f1)
+minor=$(echo $version | cut -d. -f2)
+micro=$(echo $version | cut -d. -f3)
+
+if [ $((minor%2)) -eq 0 ];
+then
+    RELEASENAME="nginx"
+else
+    RELEASENAME="nginx-mainline"
+fi
+
 # Build the package in tmp
 cd /tmp
 rm -rf /tmp/nginx* /tmp/ngx*
@@ -121,6 +133,6 @@ sudo make install
 # Check Install autobuild
 
 cd /tmp/nginx-$VERSION
-sudo checkinstall -D -pkgname nginx-mainline -pkgrelease $RELEASEVER -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "nginx-mainline, nginx-1.7"  -requires "libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
+sudo checkinstall -D -pkgname $RELEASENAME -pkgrelease $RELEASEVER -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "$RELEASENAME, nginx-1.7"  -requires "libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
 
-mv /tmp/nginx-mainline_"$VERSION"-"$RELEASEVER"_amd64.deb /tmp/nginx-mainline_"$VERSION"-"$RELEASEVER"_amd64_"$RELEASE".deb
+mv /tmp/"$RELEASENAME"_"$VERSION"-"$RELEASEVER"_amd64.deb /tmp/"$RELEASENAME"_"$VERSION"-"$RELEASEVER"_amd64_"$RELEASE".deb
