@@ -133,6 +133,6 @@ sudo make install
 # Check Install autobuild
 
 cd /tmp/nginx-$VERSION
-sudo checkinstall -D -pkgname $RELEASENAME -pkgrelease $RELEASEVER -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "$RELEASENAME, nginx-1.7"  -requires "libluajit-5.1-common, luajit, pcre, libgeoip-dev, geoip-database, libluajit-5.1-dev, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
+sudo checkinstall -D -pkgname $RELEASENAME -pkgrelease $RELEASEVER -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "$RELEASENAME, nginx-$major.$minor"  -requires "libluajit-5.1-common, geoip-database, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
 
 mv /tmp/"$RELEASENAME"_"$VERSION"-"$RELEASEVER"_amd64.deb /tmp/"$RELEASENAME"_"$VERSION"-"$RELEASEVER"_amd64_"$RELEASE".deb
