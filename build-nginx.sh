@@ -58,7 +58,8 @@ mkdir -p /tmp/nginx-$VERSION/modules
 cd /tmp/nginx-$VERSION/modules
 
 # Nginx Lua Module
-git clone https://github.com/chaoslawful/lua-nginx-module
+#git clone https://github.com/chaoslawful/lua-nginx-module
+git clone https://github.com/charlesportwoodii/lua-nginx-module
 cd lua-nginx-module
 git checkout master 
 cd ..
@@ -133,6 +134,4 @@ sudo make install
 # Check Install autobuild
 
 cd /tmp/nginx-$VERSION
-sudo checkinstall -D -pkgname $RELEASENAME -pkgrelease $RELEASEVER -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "$RELEASENAME, nginx-$major.$minor"  -requires "libluajit-5.1-common, geoip-database, luajit" -pakdir /tmp/ -y sh /tmp/nginx-$VERSION/setup
-
-mv /tmp/"$RELEASENAME"_"$VERSION"-"$RELEASEVER"_amd64.deb /tmp/"$RELEASENAME"_"$VERSION"-"$RELEASEVER"_amd64_"$RELEASE".deb
+sudo checkinstall -D --fstrans -pkgname $RELEASENAME -pkgrelease "$RELEASEVER"~"$RELEASE" -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "$RELEASENAME, nginx-$major.$minor"  -requires "libluajit-5.1-common, geoip-database, luajit" -pakdir /tmp -y sh /tmp/nginx-$VERSION/setup
