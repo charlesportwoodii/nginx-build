@@ -74,7 +74,11 @@ cd ..
 git clone https://github.com/bpaquet/ngx_http_enhanced_memcached_module
 
 # Redis2
-git clone https://github.com/agentzh/redis2-nginx-module
+git clone https://github.com/openresty/redis2-nginx-module
+
+git clone "https://github.com/openresty/echo-nginx-module"
+
+git clone "https://github.com/openresty/headers-more-nginx-module"
 
 # Pagespeed
 wget https://github.com/pagespeed/ngx_pagespeed/archive/v$PAGESPEED_VERSION-beta.zip
@@ -96,24 +100,30 @@ unzip 2.3.zip
 cd /tmp/nginx-$VERSION/
 ./configure \
 		--with-http_geoip_module \
+		--with-http_realip_module
 		--with-http_ssl_module \
+		--with-http_gunzip_module \
+		--with-http_addition_module \
+		--with-http_auth_request_module \
 		--with-http_gzip_static_module \
 		--with-http_stub_status_module \
 		--with-http_spdy_module \
 		--with-http_sub_module \
+		--with-ipv6 \
+		--with-http_mp4_module \
+		--with-mail \
+		--with-mail_ssl_module \
 		--prefix=/etc/nginx \
 		--sbin-path=/usr/bin/nginx \
 		--error-log-path=/var/log/nginx/error.log \
 		--pid-path=/var/run/nginx.pid \
 		--http-log-path=/var/log/nginx/access.log \
-		--with-ipv6 \
-		--with-http_realip_module \
-		--with-http_mp4_module \
-		--with-http_addition_module \
 		--add-module=modules/ngx_http_enhanced_memcached_module \
 		--add-module=modules/redis2-nginx-module \
 		--add-module=modules/ngx_devel_kit \
 		--add-module=modules/lua-nginx-module \
+		--add-module=modules/echo-nginx-module \
+		--add-module=modules/headers-more-nginx-module \
 		--add-module=modules/nginx-length-hiding-filter-module-master \
 		--add-module=modules/ngx_cache_purge-2.3 \
 		--add-module=modules/ngx_pagespeed-"$PAGESPEED_VERSION"-beta \
@@ -128,10 +138,22 @@ cp $SCRIPTPATH/init-nginx .
 cp $SCRIPTPATH/setup .
 
 ## Make
-make
-sudo make install
+make -j2
+make install
 
 # Check Install autobuild
 
 cd /tmp/nginx-$VERSION
-sudo checkinstall -D --fstrans -pkgname $RELEASENAME -pkgrelease "$RELEASEVER"~"$RELEASE" -pkglicense BSD -pkggroup HTTP -maintainer charlesportwoodii@ethreal.net -provides "$RELEASENAME, nginx-$major.$minor"  -requires "libluajit-5.1-common, geoip-database, luajit" -pakdir /tmp -y sh /tmp/nginx-$VERSION/setup
+sudo checkinstall \
+	-D \
+	--fstrans \
+	-pkgname $RELEASENAME \
+	-pkgrelease "$RELEASEVER"~"$RELEASE" \
+	-pkglicense BSD \
+	-pkggroup HTTP \
+	-maintainer charlesportwoodii@ethreal.net \
+	-provides "$RELEASENAME, nginx-$major.$minor" \
+	-requires "libluajit-5.1-common, geoip-database, luajit" \
+	-pakdir /tmp \
+	-y \
+	sh /tmp/nginx-$VERSION/setup

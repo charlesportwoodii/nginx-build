@@ -18,7 +18,13 @@ if [ ! -d /etc/nginx/conf/conf.d ]; then
 	$(which mkdir) -p /etc/nginx/conf/conf.d
 fi
 
-$(which wget) https://raw.github.com/charlesportwoodii/nginx-build/master/init-nginx -O /etc/init.d/nginx
+if [ ! -d /etc/nginx/conf/ssl ]; then
+	$(which mkdir) -p /etc/nginx/conf/ssl
+fi
+
+if [ ! -f /etc/nginx/conf/ssl/dhparams.pem ]; then
+	openssl dhparam -out /etc/nginx/conf/ssl/dhparams.pem 2048
+fi
 
 $(which chmod) a+x /etc/init.d/nginx
 
