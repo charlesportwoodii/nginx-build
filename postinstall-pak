@@ -26,6 +26,10 @@ if [ ! -f /etc/nginx/conf/ssl/dhparams.pem ]; then
 	openssl dhparam -out /etc/nginx/conf/ssl/dhparams.pem 2048
 fi
 
+if [ ! -f /usr/bin/nginx ]; then
+	ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
+fi
+
 $(which chmod) a+x /etc/init.d/nginx
 
 $(which update-rc.d) nginx defaults
