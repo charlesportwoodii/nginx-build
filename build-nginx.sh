@@ -58,11 +58,7 @@ mkdir -p /tmp/nginx-$VERSION/modules
 cd /tmp/nginx-$VERSION/modules
 
 # Nginx Lua Module
-#git clone https://github.com/chaoslawful/lua-nginx-module
-git clone https://github.com/charlesportwoodii/lua-nginx-module
-cd lua-nginx-module
-git checkout master 
-cd ..
+git clone https://github.com/openresty/lua-nginx-module
 
 # Nginx Devel Kit
 git clone https://github.com/simpl/ngx_devel_kit
@@ -100,7 +96,7 @@ unzip 2.3.zip
 cd /tmp/nginx-$VERSION/
 ./configure \
 		--with-http_geoip_module \
-		--with-http_realip_module
+		--with-http_realip_module \
 		--with-http_ssl_module \
 		--with-http_gunzip_module \
 		--with-http_addition_module \
