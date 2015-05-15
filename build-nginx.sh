@@ -149,7 +149,7 @@ sudo checkinstall \
 	-pkggroup HTTP \
 	-maintainer charlesportwoodii@ethreal.net \
 	-provides "$RELEASENAME, nginx-$major.$minor" \
-	-requires "libluajit-5.1-common, geoip-database, luajit" \
+	-requires "libluajit-5.1-common, libluajit-5.1-2, geoip-database" \
 	-pakdir /tmp \
 	-y \
 	sh /tmp/nginx-$VERSION/setup
