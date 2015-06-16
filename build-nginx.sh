@@ -34,7 +34,7 @@ wget http://nginx.org/download/nginx-$VERSION.tar.gz
 $(which tar) -xf /tmp/nginx-$VERSION.tar.gz
 
 ## Let Nginx build PCRE
-cd /tmp
+cd /tmp/nginx-$VERSION
 wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$PCREVERSION.tar.gz
 tar -xf pcre-$PCREVERSION.tar.gz
 
@@ -123,7 +123,7 @@ cd /tmp/nginx-$VERSION/
 		--add-module=modules/nginx-length-hiding-filter-module-master \
 		--add-module=modules/ngx_cache_purge-2.3 \
 		--add-module=modules/ngx_pagespeed-"$PAGESPEED_VERSION"-beta \
-		--with-pcre=/tmp/pcre-"$PCREVERSION" \
+		--with-pcre=pcre-"$PCREVERSION" \
 		--with-openssl=openssl-"$OPENSSLVERSION" \
 		--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext"
 
