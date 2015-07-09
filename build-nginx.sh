@@ -4,7 +4,7 @@
 # Get the current script path
 SCRIPTPATH=`pwd -P`
 PCREVERSION=8.37
-OPENSSLVERSION=1.0.2c
+OPENSSLVERSION=1.0.2d
 PAGESPEED_VERSION=1.9.32.3
 VERSION=$1
 if [ -z "$2" ]
@@ -76,6 +76,8 @@ git clone "https://github.com/openresty/echo-nginx-module"
 
 git clone "https://github.com/openresty/headers-more-nginx-module"
 
+git clone "https://github.com/yaoweibin/ngx_http_substitutions_filter_module"
+
 # Pagespeed
 wget https://github.com/pagespeed/ngx_pagespeed/archive/v$PAGESPEED_VERSION-beta.zip
 unzip v$PAGESPEED_VERSION-beta.zip
@@ -123,6 +125,7 @@ cd /tmp/nginx-$VERSION/
 		--add-module=modules/nginx-length-hiding-filter-module-master \
 		--add-module=modules/ngx_cache_purge-2.3 \
 		--add-module=modules/ngx_pagespeed-"$PAGESPEED_VERSION"-beta \
+		--add-module=modules/ngx_http_substitutions_filter_module \
 		--with-pcre=pcre-"$PCREVERSION" \
 		--with-openssl=openssl-"$OPENSSLVERSION" \
 		--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext"
