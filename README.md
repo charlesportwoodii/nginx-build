@@ -8,10 +8,13 @@ http://luajit.org/install.html
 
 
 ## Building
-
 ```
-	cd ~
-	sudo apt-get install build-essential zlib1g-dev libpcre3 libpcre3-dev libluajit-5.1-common luajit libgeoip-dev geoip-database libluajit-5.1-dev luajit unzip git checkinstall
+	apt-get install make automake g++ autoconf build-essential zlib1g-dev libpcre3 libpcre3-dev libluajit-5.1-common luajit libgeoip-dev geoip-database libluajit-5.1-dev luajit unzip git checkinstall libcurl4-openssl-dev libgmp-dev libunbound-dev m4
+```
+
+## Building
+```
+	cd /tmp
 	git clone https://github.com/charlesportwoodii/nginx-build
 	cd nginx-build
 	sudo sh build-nginx.sh <version>
