@@ -5,7 +5,7 @@
 SCRIPTPATH=`pwd -P`
 PCREVERSION=8.37
 OPENSSLVERSION=1.0.2d
-PAGESPEED_VERSION=1.9.32.3
+PAGESPEED_VERSION=v1.9.32.6-beta
 VERSION=$1
 if [ -z "$2" ]
 then
@@ -78,24 +78,22 @@ git clone "https://github.com/openresty/headers-more-nginx-module"
 
 git clone "https://github.com/yaoweibin/ngx_http_substitutions_filter_module"
 
-# Pagespeed
-wget https://github.com/pagespeed/ngx_pagespeed/archive/v$PAGESPEED_VERSION-beta.zip
-unzip v$PAGESPEED_VERSION-beta.zip
-cd ngx_pagespeed-$PAGESPEED_VERSION-beta/
-wget https://dl.google.com/dl/page-speed/psol/$PAGESPEED_VERSION.tar.gz
-tar -xzvf $PAGESPEED_VERSION.tar.gz
-cd ..
+# Nginx Pagespeed
+git clone --depth=1 -b $PAGESPEED_VERSION "https://github.com/pagespeed/ngx_pagespeed" ngx_pagespeed
 
-# Nginx Length Hiding (BREACH ATTACK Mitigation)
-wget https://github.com/nulab/nginx-length-hiding-filter-module/archive/master.zip
-unzip master.zip
+# PSOL
+cd ngx_pagespeed
+wget https://dl.google.com/dl/page-speed/psol/1.9.32.6.tar.gz
+tar -xzvf 1.9.32.6.tar.gz
+
+cd ..
+git clone https://github.com/nulab/nginx-length-hiding-filter-module
 
 # Nginx Cache Purge Module
-wget https://github.com/FRiCKLE/ngx_cache_purge/archive/2.3.zip
-unzip 2.3.zip
+git clone --depth=1 -b 2.3 https://github.com/FRiCKLE/ngx_cache_purge
 
 ## Configure
-cd /tmp/nginx-$VERSION/
+cd /tmp/nginx-$VERSION/ 
 ./configure \
 		--with-http_geoip_module \
 		--with-http_realip_module \
@@ -122,9 +120,9 @@ cd /tmp/nginx-$VERSION/
 		--add-module=modules/lua-nginx-module \
 		--add-module=modules/echo-nginx-module \
 		--add-module=modules/headers-more-nginx-module \
-		--add-module=modules/nginx-length-hiding-filter-module-master \
-		--add-module=modules/ngx_cache_purge-2.3 \
-		--add-module=modules/ngx_pagespeed-"$PAGESPEED_VERSION"-beta \
+		--add-module=modules/nginx-length-hiding-filter-module \
+		--add-module=modules/ngx_cache_purge \
+		--add-module=modules/ngx_pagespeed \
 		--add-module=modules/ngx_http_substitutions_filter_module \
 		--with-pcre=pcre-"$PCREVERSION" \
 		--with-openssl=openssl-"$OPENSSLVERSION" \
