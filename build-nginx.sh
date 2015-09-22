@@ -103,7 +103,7 @@ cd /tmp/nginx-$VERSION/
 		--with-http_auth_request_module \
 		--with-http_gzip_static_module \
 		--with-http_stub_status_module \
-		--with-http_spdy_module \
+		--with-http_v2_module \
 		--with-http_sub_module \
 		--with-ipv6 \
 		--with-http_mp4_module \
