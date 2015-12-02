@@ -4,7 +4,7 @@
 # Get the current script path
 SCRIPTPATH=`pwd -P`
 PCREVERSION=8.37
-OPENSSLVERSION=1.0.2d
+OPENSSLVERSION=1.0.2e
 PAGESPEED_VERSION=v1.9.32.6-beta
 VERSION=$1
 if [ -z "$2" ]
