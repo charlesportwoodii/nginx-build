@@ -41,7 +41,7 @@ nginx:
 	# Download PCRE
 	cd /tmp/nginx-$(VERSION) && \
 	wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$(PCREVERSION).tar.gz && \
-	tar -xzf /tmp/pcre-$(PCREVERSION).tar.gz
+	tar -xzf /tmp/nginx-$(VERSION)/pcre-$(PCREVERSION).tar.gz
 
 	# Download OpenSSL
 	cd /tmp/nginx-$(VERSION) &&\
