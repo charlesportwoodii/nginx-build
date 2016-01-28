@@ -29,7 +29,7 @@ else
 RELEASENAME="nginx-mainline"
 endif
 
-ifeq ($(RELEASE),"trusty")
+ifeq ($(RELEASE),"precise")
 PS_NGX_EXTRA_FLAGS="\ --with-cc=/usr/lib/gcc-mozilla/bin/gcc  --with-ld-opt=-static-libstdc++"
 else
 PS_NGX_EXTRA_FLAGS=""
