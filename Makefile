@@ -35,7 +35,7 @@ else
 PS_NGX_EXTRA_FLAGS=""
 endif
 
-nginx:
+build:
 	# Remove Previous Nginx builds
 	rm -rf /tmp/nginx*
 	mkdir -p /tmp/nginx-$(VERSION)
