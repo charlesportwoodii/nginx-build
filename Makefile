@@ -29,6 +29,12 @@ else
 RELEASENAME="nginx-mainline"
 endif
 
+ifeq ($(RELEASE),"trusty")
+PS_NGX_EXTRA_FLAGS="\ --with-cc=/usr/lib/gcc-mozilla/bin/gcc  --with-ld-opt=-static-libstdc++"
+else
+PS_NGX_EXTRA_FLAGS=""
+endif
+
 nginx:
 	# Remove Previous Nginx builds
 	rm -rf /tmp/nginx*
@@ -141,6 +147,7 @@ nginx:
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
 		--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3"
+		$(PS_NGX_EXTRA_FLAGS)
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
