@@ -87,7 +87,7 @@ build:
 
 	# Google Brotli
         cd /tmp/nginx-$(VERSION)/modules && \
-        git clone https://github.com/google/ngx_brotli
+        git clone "https://github.com/google/ngx_brotli"
 
 	# Openresty Echo Module
 	cd /tmp/nginx-$(VERSION)/modules && \
