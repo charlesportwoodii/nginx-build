@@ -64,6 +64,14 @@ build:
 	./config --prefix=/tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION).openssl no-shared enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3 && \
 	make depend
 
+	# Installing Google Brotli library
+	cd /tmp && \
+	git clone "https://github.com/google/brotli.git" &&\
+	cd /tmp/brotli && \
+	python setup.py install && \
+	make -j2 && \
+	make install
+	
 	# Download Nginx Modules
 	mkdir -p /tmp/nginx-$(VERSION)/modules
 
