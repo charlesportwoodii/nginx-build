@@ -85,6 +85,10 @@ build:
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/openresty/redis2-nginx-module
 
+	# Google Brotli
+        cd /tmp/nginx-$(VERSION)/modules && \
+        git clone https://github.com/google/ngx_brotli
+
 	# Openresty Echo Module
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone "https://github.com/openresty/echo-nginx-module"
@@ -143,6 +147,7 @@ build:
 		--add-module=modules/nginx-length-hiding-filter-module \
 		--add-module=modules/ngx_cache_purge \
 		--add-module=modules/ngx_pagespeed \
+		--add-module=modules/ngx_brotli \
 		--add-module=modules/ngx_http_substitutions_filter_module \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
