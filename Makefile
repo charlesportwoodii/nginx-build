@@ -66,10 +66,11 @@ build:
 
 	# Installing Google Brotli library
 	cd /tmp && \
-	git clone "https://github.com/google/brotli.git" &&\
-	cd /tmp/brotli && \
-	python setup.py install && \
-	make -j2 && \
+	git clone https://github.com/bagder/libbrotli && \
+	cd /tmp/libbrotli && \
+	./autogen.sh && \
+	./configure && \
+	make -j$(CORES) && \
 	make install
 	
 	# Download Nginx Modules
