@@ -86,8 +86,8 @@ build:
 	git clone https://github.com/openresty/redis2-nginx-module
 
 	# Google Brotli
-        cd /tmp/nginx-$(VERSION)/modules && \
-        git clone "https://github.com/google/ngx_brotli"
+	cd /tmp/nginx-$(VERSION)/modules && \
+	git clone "https://github.com/google/ngx_brotli"
 
 	# Openresty Echo Module
 	cd /tmp/nginx-$(VERSION)/modules && \
