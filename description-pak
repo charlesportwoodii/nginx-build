@@ -12,8 +12,9 @@ nginx web/proxy server + OpenResty components
  Included with this package is a strong ssl.conf file which includes
  a recommended SSL config that can be included by default.
  .
- CORE MODULES: Nginx Core, GeopIP, SSL, Gzip, RealIP, Gunzip, Addition,
- Auth Request, Stub, SPDY, Sub, Mail, Mail SSL, IPv6, MP4
+ CORE MODULES: Nginx Core, GeopIP, SSL, GZIP, RealIP, Gunzip, Addition,
+ Auth Request, Stub, HTTP2, Sub, Mail, Mail SSL, IPv6, MP4
  .
  EXTRA MODULES: Nginx Enhanced Memcache Module, Redis2, Lua, Echo, 
- Headers More, Length Hding Header, Cache Purge, Nginx Pagespeed
+ Headers More, Length Hiding Header, Cache Purge, Nginx Pagespeed,
+ Nginx Brotli
