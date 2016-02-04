@@ -64,6 +64,15 @@ build:
 	./config --prefix=/tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION).openssl no-shared enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3 && \
 	make depend
 	
+	# Download and install libbrotli
+	cd /tmp && \		
+	git clone https://github.com/bagder/libbrotli && \
+	cd /tmp/libbrotli && \		
+	./autogen.sh && \		
+	./configure && \		
+	make -j$(CORES) && \		
+	make install
+	
 	# Download Nginx Modules
 	mkdir -p /tmp/nginx-$(VERSION)/modules
 
@@ -119,6 +128,9 @@ build:
 	# Configure
 	cd /tmp/nginx-$(VERSION) && \
 	./configure \
+		--with-cc-opt="-static -static-libgcc" \
+		--with-ld-opt="-static" \
+		--with-cpu-opt=generic
 		--with-http_geoip_module \
 		--with-http_realip_module \
 		--with-http_ssl_module \
@@ -148,6 +160,7 @@ build:
 		--add-module=modules/ngx_cache_purge \
 		--add-module=modules/ngx_pagespeed \
 		--add-module=modules/ngx_http_substitutions_filter_module \
+		--add-module=modules/ngx_brotli \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
 		--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3" $(PS_NGX_EXTRA_FLAGS)
