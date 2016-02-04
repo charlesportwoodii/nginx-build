@@ -65,12 +65,12 @@ build:
 	make depend
 	
 	# Download and install libbrotli
-	cd /tmp && \		
+	cd /tmp && \
 	git clone https://github.com/bagder/libbrotli && \
-	cd /tmp/libbrotli && \		
-	./autogen.sh && \		
-	./configure && \		
-	make -j$(CORES) && \		
+	cd /tmp/libbrotli && \
+	./autogen.sh && \
+	./configure && \
+	make -j$(CORES) && \
 	make install
 	
 	# Download Nginx Modules
