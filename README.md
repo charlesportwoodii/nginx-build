@@ -1,11 +1,12 @@
 # Build Scripts for Nginx
 This package contains scripts necessary to automatically build Nginx on your system.
 
-## LuaJit Dependency
-This package is depandant upon a source install of LibLuaJit 2.0. Instructions for installing this dependency can be found here:
+## Non-Apt dependencies
 
-http://luajit.org/install.html
+This package is depedant upon luajit and libbrotli. Build and packaging instructions can be found at:
 
+https://github.com/charlesportwoodii/luajit
+https://github.com/charlesportwoodii/libbrotli
 
 ## Dependencies
 ```

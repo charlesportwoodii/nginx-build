@@ -21,3 +21,5 @@ mkdir -p /etc/nginx/html
 mkdir -p /etc/nginx/proxy_temp
 mkdir -p /etc/nginx/scgi_temp
 mkdir -p /etc/nginx/uwsgi_temp
+
+ldconfig

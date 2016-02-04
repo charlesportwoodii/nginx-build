@@ -35,22 +35,38 @@ else
 PS_NGX_EXTRA_FLAGS=
 endif
 
-build:
-	# Remove Previous Nginx builds
+build: clean base pcre openssl nginx
+
+clean:
 	rm -rf /tmp/nginx*
+	# Remove Previous Nginx builds
+	mkdir -p /tmp/nginx-$(VERSION)
+
+base:
 	mkdir -p /tmp/nginx-$(VERSION)
 
 	# Download Nginx
 	cd /tmp && \
 	wget -qO- http://nginx.org/download/nginx-$(VERSION).tar.gz | tar -xz
-	
+
+pcre: 
+	mkdir -p /tmp/nginx-$(VERSION)
+
+	rm -rf /tmp/nginx-$(VERSION)/pcre-$(PCREVERSION).tar.gz
+	rm -rf /tmp/nginx-$(VERSION)/pcre-$(PCREVERSION)*
+
 	# Download PCRE
 	cd /tmp/nginx-$(VERSION) && \
 	wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$(PCREVERSION).tar.gz && \
 	tar -xzf /tmp/nginx-$(VERSION)/pcre-$(PCREVERSION).tar.gz
 
+openssl:
+	mkdir -p /tmp/nginx-$(VERSION)
+	rm -rf /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION).tar.gz
+	rm -rf /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)
+
 	# Download OpenSSL
-	cd /tmp/nginx-$(VERSION) &&\
+	cd /tmp/nginx-$(VERSION) && \
 	wget https://www.openssl.org/source/openssl-$(OPENSSLVERSION).tar.gz && \
 	tar -xf openssl-$(OPENSSLVERSION).tar.gz
 
@@ -63,17 +79,8 @@ build:
 	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
 	./config --prefix=/tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION).openssl no-shared enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3 && \
 	make depend
-	
-	# Download and install libbrotli
-	cd /tmp && \
-	rm -rf /tmp/librotli && \
-	git clone https://github.com/bagder/libbrotli && \
-	cd /tmp/libbrotli && \
-	./autogen.sh && \
-	./configure && \
-	make -j$(CORES) && \
-	make install
-	
+
+nginx:
 	# Download Nginx Modules
 	mkdir -p /tmp/nginx-$(VERSION)/modules
 
@@ -128,10 +135,9 @@ build:
 
 	# Configure
 	cd /tmp/nginx-$(VERSION) && \
+	export LUAJIT_LIB=/usr/local/lib && \
+ 	export LUAJIT_INC=/usr/local/include/luajit-2.0 && \
 	./configure \
-		--with-cc-opt="-static -static-libgcc" \
-		--with-ld-opt="-static" \
-		--with-cpu-opt=generic \
 		--with-http_geoip_module \
 		--with-http_realip_module \
 		--with-http_ssl_module \
@@ -159,9 +165,9 @@ build:
 		--add-module=modules/headers-more-nginx-module \
 		--add-module=modules/nginx-length-hiding-filter-module \
 		--add-module=modules/ngx_cache_purge \
-		--add-module=modules/ngx_pagespeed \
 		--add-module=modules/ngx_http_substitutions_filter_module \
 		--add-module=modules/ngx_brotli \
+		--add-module=modules/ngx_pagespeed \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
 		--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3" $(PS_NGX_EXTRA_FLAGS)
@@ -188,7 +194,7 @@ package:
 		-pkggroup HTTP \
 		-maintainer charlesportwoodii@ethreal.net \
 		-provides "$(RELEASENAME), nginx-$(major).$(minor)" \
-		-requires "luajit, libluajit-5.1-common, libluajit-5.1-2, geoip-database" \
+		-requires "luajit, libluajit-5.1-common, libluajit-5.1-2, libbrotli, luajit-2.0, geoip-database" \
 		-pakdir /tmp \
 		-y \
 		sh /tmp/nginx-$(VERSION)/setup

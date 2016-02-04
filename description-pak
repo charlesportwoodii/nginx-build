@@ -3,9 +3,9 @@ nginx web/proxy server + OpenResty components
  created by Igor Sysoev. It can be used both as a standalone web server
  and as a proxy to reduce the load on back-end HTTP or mail servers.
  .
- This package provides a version of nginx with the complete set of
- standard modules included (but omitting some of those included in
- nginx-extras), in addition to several OpenResty modules.
+ This package provides a statically compiled version of nginx with the 
+ complete set of standard modules included, in addition to several 
+ OpenResty modules.
  .
  This package include pre-bundled version of PCRE, and OpenSSL.
  .
@@ -16,5 +16,4 @@ nginx web/proxy server + OpenResty components
  Auth Request, Stub, HTTP2, Sub, Mail, Mail SSL, IPv6, MP4
  .
  EXTRA MODULES: Nginx Enhanced Memcache Module, Redis2, Lua, Echo, 
- Headers More, Length Hiding Header, Cache Purge, Nginx Pagespeed,
- Nginx Brotli
+ Headers More, Length Hiding Header, Cache Purge, Nginx Brotli
