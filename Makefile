@@ -66,6 +66,7 @@ build:
 	
 	# Download and install libbrotli
 	cd /tmp && \
+	rm -rf /tmp/librotli && \
 	git clone https://github.com/bagder/libbrotli && \
 	cd /tmp/libbrotli && \
 	./autogen.sh && \
