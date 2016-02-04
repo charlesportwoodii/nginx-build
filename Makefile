@@ -130,7 +130,7 @@ build:
 	./configure \
 		--with-cc-opt="-static -static-libgcc" \
 		--with-ld-opt="-static" \
-		--with-cpu-opt=generic
+		--with-cpu-opt=generic \
 		--with-http_geoip_module \
 		--with-http_realip_module \
 		--with-http_ssl_module \
