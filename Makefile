@@ -63,15 +63,6 @@ build:
 	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
 	./config --prefix=/tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION).openssl no-shared enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3 && \
 	make depend
-
-	# Installing Google Brotli library
-	cd /tmp && \
-	git clone https://github.com/bagder/libbrotli && \
-	cd /tmp/libbrotli && \
-	./autogen.sh && \
-	./configure && \
-	make -j$(CORES) && \
-	make install
 	
 	# Download Nginx Modules
 	mkdir -p /tmp/nginx-$(VERSION)/modules
@@ -156,7 +147,6 @@ build:
 		--add-module=modules/nginx-length-hiding-filter-module \
 		--add-module=modules/ngx_cache_purge \
 		--add-module=modules/ngx_pagespeed \
-		--add-module=modules/ngx_brotli \
 		--add-module=modules/ngx_http_substitutions_filter_module \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
