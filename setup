@@ -22,4 +22,6 @@ mkdir -p /etc/nginx/proxy_temp
 mkdir -p /etc/nginx/scgi_temp
 mkdir -p /etc/nginx/uwsgi_temp
 
+mkdir -p /var/log/nginx
+
 ldconfig
