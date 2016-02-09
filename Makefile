@@ -159,14 +159,14 @@ nginx:
 		--http-log-path=/var/log/nginx/access.log \
 		--add-module=modules/ngx_http_enhanced_memcached_module \
 		--add-module=modules/redis2-nginx-module \
-		--add-module=modules/ngx_devel_kit \
-		--add-module=modules/lua-nginx-module \
 		--add-module=modules/echo-nginx-module \
 		--add-module=modules/headers-more-nginx-module \
 		--add-module=modules/nginx-length-hiding-filter-module \
 		--add-module=modules/ngx_cache_purge \
 		--add-module=modules/ngx_http_substitutions_filter_module \
 		--add-module=modules/ngx_brotli \
+		--add-module=modules/ngx_devel_kit \
+		--add-module=modules/lua-nginx-module \
 		--add-module=modules/ngx_pagespeed \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
