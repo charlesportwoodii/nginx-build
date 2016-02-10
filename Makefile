@@ -86,7 +86,7 @@ nginx:
 
 	# Nginx Lua Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/openresty/lua-nginx-module
+	git clone -b ngx_resolver_connection_t https://github.com/charlesportwoodii/lua-nginx-module
 
 	# Nginx Devel Kit
 	cd /tmp/nginx-$(VERSION)/modules && \
@@ -168,7 +168,6 @@ nginx:
 		--add-module=modules/ngx_brotli \
 		--add-module=modules/ngx_devel_kit \
 		--add-module=modules/lua-nginx-module \
-		--add-module=modules/ngx_pagespeed \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
 		--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3" $(PS_NGX_EXTRA_FLAGS)
