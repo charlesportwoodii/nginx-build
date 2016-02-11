@@ -86,7 +86,7 @@ nginx:
 
 	# Nginx Lua Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone -b ngx_resolver_connection_t https://github.com/charlesportwoodii/lua-nginx-module
+	git clone https://github.com/openresty/lua-nginx-module
 
 	# Nginx Devel Kit
 	cd /tmp/nginx-$(VERSION)/modules && \
