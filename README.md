@@ -6,6 +6,7 @@ This package contains scripts necessary to automatically build Nginx on your sys
 This package is depedant upon luajit and libbrotli. Build and packaging instructions can be found at:
 
 https://github.com/charlesportwoodii/luajit
+
 https://github.com/charlesportwoodii/libbrotli
 
 ## Dependencies
