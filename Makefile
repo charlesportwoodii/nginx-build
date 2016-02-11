@@ -120,7 +120,7 @@ nginx:
 
 	# Nginx Pagespeed
 	mkdir -p /tmp/nginx-$(VERSION)/modules/ngx_pagespeed
-	git clone --depth=1 -b $(PAGESPEED_VERSION) "https://github.com/pagespeed/ngx_pagespeed" /tmp/nginx-$(VERSION)/modules/ngx_pagespeed && \
+	git clone --depth=1 "https://github.com/pagespeed/ngx_pagespeed" /tmp/nginx-$(VERSION)/modules/ngx_pagespeed && \
 	cd /tmp/nginx-$(VERSION)/modules/ngx_pagespeed && \
 	wget https://dl.google.com/dl/page-speed/psol/$(PSOLVERSION).tar.gz && \
 	tar -xzvf $(PSOLVERSION).tar.gz
