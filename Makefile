@@ -86,7 +86,9 @@ nginx:
 
 	# Nginx Lua Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/openresty/lua-nginx-module
+	git clone https://github.com/openresty/lua-nginx-module && \
+	cd lua-nginx-module && \
+	git checkout v0.10.1rc0 
 
 	# Nginx Devel Kit
 	cd /tmp/nginx-$(VERSION)/modules && \
