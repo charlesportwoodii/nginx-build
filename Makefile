@@ -3,8 +3,7 @@ SHELL := /bin/bash
 # Dependency Versions
 PCREVERSION?=8.38
 OPENSSLVERSION?=1.0.2f
-PAGESPEED_VERSION=v1.10.33.2-beta
-PSOLVERSION?=1.10.33.2
+NPS_VERSION?=1.10.33.4
 RELEASEVER?=1
 
 # Bash data
@@ -27,12 +26,6 @@ ifeq ($(MODULO),0)
 RELEASENAME="nginx"
 else
 RELEASENAME="nginx-mainline"
-endif
-
-ifeq ($(RELEASE),precise)
-PS_NGX_EXTRA_FLAGS=--with-cc=/usr/lib/gcc-mozilla/bin/gcc --with-ld-opt=-static-libstdc++
-else
-PS_NGX_EXTRA_FLAGS=
 endif
 
 build: clean base pcre openssl nginx
@@ -121,11 +114,13 @@ nginx:
 	git clone "https://github.com/yaoweibin/ngx_http_substitutions_filter_module"
 
 	# Nginx Pagespeed
-	mkdir -p /tmp/nginx-$(VERSION)/modules/ngx_pagespeed
-	git clone --depth=1 "https://github.com/pagespeed/ngx_pagespeed" /tmp/nginx-$(VERSION)/modules/ngx_pagespeed && \
+	cd /tmp/nginx-$(VERSION)/modules && \
+	git clone --depth=1 https://github.com/pagespeed/ngx_pagespeed && \
 	cd /tmp/nginx-$(VERSION)/modules/ngx_pagespeed && \
-	wget https://dl.google.com/dl/page-speed/psol/$(PSOLVERSION).tar.gz && \
-	tar -xzvf $(PSOLVERSION).tar.gz
+	git fetch --tags && \
+	git checkout v$(NPS_VERSION)-beta && \
+	wget https://dl.google.com/dl/page-speed/psol/$(NPS_VERSION).tar.gz && \
+	tar -xzvf $(NPS_VERSION).tar.gz 
 
 	# Length Hiding Modules
 	cd /tmp/nginx-$(VERSION)/modules && \
@@ -172,7 +167,7 @@ nginx:
 		--add-module=modules/ngx_pagespeed \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
-		--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3" $(PS_NGX_EXTRA_FLAGS)
+		--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3"
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
