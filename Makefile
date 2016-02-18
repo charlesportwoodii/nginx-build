@@ -3,7 +3,7 @@ SHELL := /bin/bash
 # Dependency Versions
 PCREVERSION?=8.38
 OPENSSLVERSION?=1.0.2f
-NPS_VERSION?=1.10.33.4
+NPS_VERSION?=1.10.33.5
 RELEASEVER?=1
 
 # Bash data
