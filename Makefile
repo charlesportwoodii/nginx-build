@@ -66,8 +66,8 @@ openssl:
 	# Apply Cloudflare Chacha20-Poly1305 patch to OpenSSL
 	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
 	git clone https://github.com/cloudflare/sslconfig && \
-	cp sslconfig/patches/openssl__chacha20_poly1305_cf.patch . && \
-	patch -p1 < openssl__chacha20_poly1305_cf.patch
+	cp sslconfig/patches/openssl__chacha20_poly1305_draft_and_rfc_ossl102f.patch . && \
+	patch -p1 < openssl__chacha20_poly1305_draft_and_rfc_ossl102f.patch 2>/dev/null; true # Ignore 
 
 	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
 	./config --prefix=/tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION).openssl no-shared enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3 && \
