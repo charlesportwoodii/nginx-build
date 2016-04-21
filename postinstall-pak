@@ -30,11 +30,19 @@ if [ ! -f /usr/bin/nginx ]; then
 	ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
 fi
 
-$(which chmod) a+x /etc/init.d/nginx
+CODENAME=$(lsb_release --codename | cut -f2)
+if [ $CODENAME = "xenial" ]
+then
+        systemctl enable nginx.service
+	systemctl daemon-reload
+	systemctl start nginx.service
+else
+	$(which chmod) a+x /etc/init.d/nginx
 
-$(which update-rc.d) nginx defaults
+	$(which update-rc.d) nginx defaults
 
-$(which killall) nginx
-$(which service) nginx start
+	$(which killall) nginx
+	$(which service) nginx start
+fi
 
 exit 0

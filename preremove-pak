@@ -2,7 +2,14 @@
 
 set +e
 
-$(which service) nginx stop
+CODENAME=$(lsb_release --codename | cut -f2)
+if [ $CODENAME = "xenial" ]
+then
+	systemctl stop nginx.service
+        systemctl disable nginx.service
+else
+	$(which service) nginx stop
+fi
 
 unlink /usr/bin/nginx
 exit 0

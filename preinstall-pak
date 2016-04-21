@@ -3,6 +3,13 @@
 set +e
 echo "Stopping Nginx"
 
-$(which service) nginx stop
+CODENAME=$(lsb_release --codename | cut -f2)
+if [ $CODENAME = "xenial" ]
+then
+	systemctl stop nginx.service
+	systemctl disable nginx.service
+else
+	$(which service) nginx stop
+fi
 
 exit 0
