@@ -3,7 +3,7 @@ make install
 CODENAME=$(lsb_release --codename | cut -f2)
 if [ $CODENAME = "xenial" ]
 then
-	cp nginx.service /etc/systemd/system/nginx.service
+	cp nginx.service /lib/systemd/system/nginx.service
 	systemctl enable nginx.service
 else
 	cp init-nginx /etc/init.d/nginx
