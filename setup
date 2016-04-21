@@ -5,6 +5,7 @@ if [ $CODENAME = "xenial" ]
 then
 	cp nginx.service /etc/systemd/system/nginx.service
 	systemctl enable nginx.service
+	systemctl daemon-reload
 else
 	cp init-nginx /etc/init.d/nginx
 	chmod a+x /etc/init.d/nginx
