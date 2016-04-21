@@ -5,9 +5,9 @@ set +e
 CODENAME=$(lsb_release --codename | cut -f2)
 if [ $CODENAME = "xenial" ]
 then
-	rm -rf /lib/systemd/system/php-fpm.service
 	systemctl stop nginx.service
         systemctl disable nginx.service
+	rm -rf /lib/systemd/system/php-fpm.service
 else
 	$(which service) nginx stop
 fi
