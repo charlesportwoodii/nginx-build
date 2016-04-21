@@ -1,7 +1,14 @@
 #!/bin/bash
 make install
-cp init-nginx /etc/init.d/nginx
-chmod a+x /etc/init.d/nginx
+CODENAME=$(lsb_release --codename | cut -f2)
+if [[ $CODENAME -eq "xenial" ]]
+then
+	cp nginx.service /etc/systemd/system/nginx.service
+	chmod a+x /etc/systemd/system/nginx.service
+else
+	cp init-nginx /etc/init.d/nginx
+	chmod a+x /etc/init.d/nginx
+fi
 
 cp conf/ssl.conf /etc/nginx/conf/ssl.conf
 cp conf/fastcgi.conf /etc/nginx/conf/fastcgi.conf.default
