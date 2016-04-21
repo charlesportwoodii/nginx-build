@@ -179,6 +179,7 @@ package:
 	cp -R $(SCRIPTPATH)/*-pak /tmp/nginx-$(VERSION)
 	cp -R $(SCRIPTPATH)/conf /tmp/nginx-$(VERSION)
 	cp $(SCRIPTPATH)/init-nginx /tmp/nginx-$(VERSION)
+	cp $(SCRIPTPATH)/nginx.service /tmp/nginx-$(VERSION)
 	cp $(SCRIPTPATH)/setup /tmp/nginx-$(VERSION)
 
 	cd /tmp/nginx-$(VERSION) && \

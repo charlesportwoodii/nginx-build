@@ -1,7 +1,7 @@
 #!/bin/bash
 make install
 CODENAME=$(lsb_release --codename | cut -f2)
-if [[ $CODENAME -eq "xenial" ]]
+if [ $CODENAME = "xenial" ]
 then
 	cp nginx.service /etc/systemd/system/nginx.service
 	chmod a+x /etc/systemd/system/nginx.service
