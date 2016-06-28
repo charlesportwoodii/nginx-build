@@ -174,9 +174,15 @@ nginx:
 	make -j$(CORES)
 
 pre_package:
-	# Remove the working build directory
+	# Clean the old build directory
 	rm -rf /tmp/nginx-$(VERSION)-install
 
+	# Install Nginx to nginx-<version>-install for fpm
+	cd /tmp/nginx-$(VERSION) && \
+	make install DESTDIR=/tmp/nginx-$(VERSION)-install
+
+	rm -rf /tmp/nginx-$(VERSION)-install/etc/nginx/conf/nginx.conf
+	
 	# Create the working build directory
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/client_body_temp 
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/conf/conf.d
@@ -207,10 +213,6 @@ pre_package:
 	# Copy systemd file
 	mkdir -p /tmp//nginx-$(VERSION)-install/lib/systemd/system
 	cp $(SCRIPTPATH)/nginx.service /tmp/nginx-$(VERSION)-install/lib/systemd/system/nginx.service
-	
-	# Install Nginx to nginx-<version>-install for fpm
-	cd /tmp/nginx-$(VERSION) && \
-	make install DESTDIR=/tmp/nginx-$(VERSION)-install
 
 fpm_debian: pre_package
 	echo "Packaging Nginx for Debian"
