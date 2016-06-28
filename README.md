@@ -21,6 +21,23 @@ https://github.com/charlesportwoodii/libbrotli
 sudo apt-get install make automake g++ autoconf build-essential zlib1g-dev libpcre3 libpcre3-dev libluajit-5.1-common luajit libgeoip-dev geoip-database libluajit-5.1-dev luajit unzip git checkinstall libgmp-dev libunbound-dev m4 python2.7 python-dev
 ```
 
+## RedHat Builds
+
+1. Install `luajit` and `libbrotli`.
+
+These packages are available at the following locations, and come provided with a simple build system.
+
+```bash
+https://github.com/charlesportwoodii/luajit
+https://github.com/charlesportwoodii/libbrotli
+```
+
+2. Install `yum` dependencies:
+```bash
+sudo yum install make automake autoconf g++ build-essential glib2-devel glibc-devel git libmcrypt-devel libmcrypt gcc libtool libicu-devel gcc-c++ geoip-devel
+sudo yum group install "Development Tools"
+```
+
 ## Building
 
 Nginx can be built using the following commands:

@@ -250,18 +250,16 @@ fpm_rpm: pre_package
 		-n $(RELEASENAME) \
 		-v $(VERSION)_$(RELEASEVER) \
 		-C /tmp/nginx-$(VERSION)-install \
-		-p $(RELEASENAME)_$(VERSION)-$(RELEASEVER)~$(shell arch).rpm \
+		-p $(RELEASENAME)_$(VERSION)-$(RELEASEVER)_$(shell arch).rpm \
 		-m "charlesportwoodii@erianna.com" \
 		--license "BSD" \
 		--url https://github.com/charlesportwoodii/nginx-build \
 		--description "$(RELEASENAME), $(VERSION)" \
 		--vendor "Charles R. Portwood II" \
 		--depends "luajit > 0" \
-		--depends "libluajit-5.1-common > 0" \
-		--depends "libluajit-5.1-2 > 0" \
 		--depends "libbrotli > 0" \
 		--depends "luajit-2.0 > 0" \
-		--depends "geoip-database > 0" \
+		--depends "GeoIP > 0" \
 		--rpm-digest sha384 \
 		--rpm-compression gzip \
 		--template-scripts \
