@@ -171,29 +171,100 @@ nginx:
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
-	make -j$(CORES) && \
-	make install
+	make -j$(CORES)
 
-package:
-	# Copy Packaging tools
-	cp -R $(SCRIPTPATH)/*-pak /tmp/nginx-$(VERSION)
-	cp -R $(SCRIPTPATH)/conf /tmp/nginx-$(VERSION)
-	cp $(SCRIPTPATH)/init-nginx /tmp/nginx-$(VERSION)
-	cp $(SCRIPTPATH)/nginx.service /tmp/nginx-$(VERSION)
-	cp $(SCRIPTPATH)/setup /tmp/nginx-$(VERSION)
+pre_package:
+	# Remove the working build directory
+	rm -rf /tmp/nginx-$(VERSION)-install
 
+	# Create the working build directory
+	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/client_body_temp 
+	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/conf/conf.d
+	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/fastcgi_temp
+	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/proxy_temp
+	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/scgi_temp
+	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/uwsgi_temp
+	mkdir -p /tmp/nginx-$(VERSION)-install/var/log/nginx
+
+	# Copy local configuration files
+	cp $(SCRIPTPATH)/conf/ssl.conf /tmp/nginx-$(VERSION)-install/etc/nginx/conf/ssl.conf
+	cp $(SCRIPTPATH)/conf/fastcgi.conf /tmp/nginx-$(VERSION)-install/etc/nginx/conf/fastcgi.conf.default
+	cp $(SCRIPTPATH)/conf/fastcgi_params /tmp/nginx-$(VERSION)-install/etc/nginx/conf/fastcgi_params.default
+	cp $(SCRIPTPATH)/conf/koi-utf /tmp/nginx-$(VERSION)-install/etc/nginx/conf
+	cp $(SCRIPTPATH)/conf/koi-win /tmp/nginx-$(VERSION)-install/etc/nginx/conf
+	cp $(SCRIPTPATH)/conf/mime.types /tmp/nginx-$(VERSION)-install/etc/nginx/conf
+	cp $(SCRIPTPATH)/conf/nginx.conf /tmp/nginx-$(VERSION)-install/etc/nginx/conf/nginx.conf.default
+	cp $(SCRIPTPATH)/conf/scgi_params /tmp/nginx-$(VERSION)-install/etc/nginx/conf
+	cp $(SCRIPTPATH)/conf/uwsgi_params /tmp/nginx-$(VERSION)-install/etc/nginx/conf
+	cp $(SCRIPTPATH)/conf/win-utf /tmp/nginx-$(VERSION)-install/etc/nginx/conf
+
+	# Copy the LICENSE file
+	mkdir -p /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)
+	cp /tmp/nginx-$(VERSION)/LICENSE /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/LICENSE
+	cp /tmp/nginx-$(VERSION)/README /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/README
+	cp /tmp/nginx-$(VERSION)/CHANGES /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/CHANGES
+
+	# Copy systemd file
+	mkdir -p /tmp//nginx-$(VERSION)-install/lib/systemd/system
+	cp $(SCRIPTPATH)/nginx.service /tmp/nginx-$(VERSION)-install/lib/systemd/system/nginx.service
+	
+	# Install Nginx to nginx-<version>-install for fpm
 	cd /tmp/nginx-$(VERSION) && \
-	checkinstall \
-		-D \
-		--fstrans \
-		-pkgname $(RELEASENAME) \
-		-pkgrelease "$(RELEASEVER)"~"$(RELEASE)" \
-		-pkglicense BSD \
-		-pkggroup HTTP \
-		-maintainer charlesportwoodii@ethreal.net \
-		-provides "$(RELEASENAME), nginx-$(major).$(minor)" \
-		-requires "luajit, libluajit-5.1-common, libluajit-5.1-2, libbrotli, luajit-2.0, geoip-database" \
-		-pakdir /tmp \
-		-y \
-		sh /tmp/nginx-$(VERSION)/setup
+	make install DESTDIR=/tmp/nginx-$(VERSION)-install
 
+fpm_debian: pre_package
+	echo "Packaging Nginx for Debian"
+
+	# Copy init.d for non systemd systems
+	mkdir -p /tmp/nginx-$(VERSION)-install/etc/init.d
+	cp $(SCRIPTPATH)/debian/init-nginx /tmp/nginx-$(VERSION)-install/etc/init.d/nginx
+
+	fpm -s dir \
+		-t deb \
+		-n $(RELEASENAME) \
+		-v $(VERSION)-$(RELEASEVER)~$(shell lsb_release --codename | cut -f2) \
+		-C /tmp/nginx-$(VERSION)-install \
+		-p $(RELEASENAME)_$(VERSION)-$(RELEASEVER)~$(shell lsb_release --codename | cut -f2)_$(shell arch).deb \
+		-m "charlesportwoodii@erianna.com" \
+		--license "BSD" \
+		--url https://github.com/charlesportwoodii/nginx-build \
+		--description "$(RELEASENAME), $(VERSION)" \
+		--vendor "Charles R. Portwood II" \
+		--depends "luajit > 0" \
+		--depends "libluajit-5.1-common > 0" \
+		--depends "libluajit-5.1-2 > 0" \
+		--depends "libbrotli > 0" \
+		--depends "luajit-2.0 > 0" \
+		--depends "geoip-database > 0" \
+		--deb-systemd-restart-after-upgrade \
+		--template-scripts \
+		--before-install $(SCRIPTPATH)/debian/preinstall-pak \
+		--after-install $(SCRIPTPATH)/debian/postinstall-pak \
+		--before-remove $(SCRIPTPATH)/debian/preremove-pak 
+
+fpm_rpm: pre_package
+	echo "Packaging Nginx for RPM"
+
+	fpm -s dir \
+		-t rpm \
+		-n $(RELEASENAME) \
+		-v $(VERSION)_$(RELEASEVER) \
+		-C /tmp/nginx-$(VERSION)-install \
+		-p $(RELEASENAME)_$(VERSION)-$(RELEASEVER)~$(shell arch).rpm \
+		-m "charlesportwoodii@erianna.com" \
+		--license "BSD" \
+		--url https://github.com/charlesportwoodii/nginx-build \
+		--description "$(RELEASENAME), $(VERSION)" \
+		--vendor "Charles R. Portwood II" \
+		--depends "luajit > 0" \
+		--depends "libluajit-5.1-common > 0" \
+		--depends "libluajit-5.1-2 > 0" \
+		--depends "libbrotli > 0" \
+		--depends "luajit-2.0 > 0" \
+		--depends "geoip-database > 0" \
+		--rpm-digest sha384 \
+		--rpm-compression gzip \
+		--template-scripts \
+		--before-install $(SCRIPTPATH)/rpm/preinstall \
+		--after-install $(SCRIPTPATH)/rpm/postinstall \
+		--before-remove $(SCRIPTPATH)/rpm/preremove 

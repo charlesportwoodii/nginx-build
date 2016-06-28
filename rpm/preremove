@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set +e
+
+systemctl stop nginx.service
+systemctl disable nginx.service
+
+exit 0

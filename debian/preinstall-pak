@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set +e
+echo "Stopping Nginx"
+
+which lsb_release
+if [ "$?" == 0 ]
+then
+        CODENAME=$(lsb_release --codename | cut -f2)
+        if [ "$CODENAME" = "precise" ]
+        then
+			$(which service) nginx stop
+        else
+            systemctl stop nginx.service
+		    systemctl disable nginx.service
+        fi
+else
+    systemctl stop nginx.service
+	systemctl disable nginx.service
+fi
+
+exit 0
