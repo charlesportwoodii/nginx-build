@@ -6,7 +6,7 @@ which lsb_release
 if [ "$?" == 0 ]
 then
         CODENAME=$(lsb_release --codename | cut -f2)
-        if [ "$CODENAME" = "precise" ]
+        if [ "$CODENAME" = "precise" ] || [ "$codename" = "trusty" ]
         then
 	    $(which service) nginx stop
 	    rm -rf /etc/init.d/nginx

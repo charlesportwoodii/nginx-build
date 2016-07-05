@@ -34,7 +34,7 @@ which lsb_release
 if [ "$?" == 0 ]
 then
         CODENAME=$(lsb_release --codename | cut -f2)
-        if [ "$CODENAME" = "precise" ]
+        if [ "$CODENAME" = "precise" ] || [ "$codename" = "trusty" ]
         then
 			$(which chmod) a+x /etc/init.d/nginx
 			$(which update-rc.d) nginx defaults
