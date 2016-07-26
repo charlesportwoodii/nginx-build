@@ -3,7 +3,8 @@ dist: trusty
 
 env:
   - BUILD_IMAGE=1604
-  - BUILD_IMAGE=1404
+# Ubuntu 14.04 has a bug in GNUTLS that prevents ECDSA keys from working
+# - BUILD_IMAGE=1404
   
 language: ruby
 
