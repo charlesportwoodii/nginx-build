@@ -1,0 +1,33 @@
+sudo: required
+language: ruby
+
+services:
+    - docker
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - mkdir -p build/deb/trusty build/deb/xenial build/rpm/CentOS/7/x86_64
+  - source .vs
+  - docker-compose build
+
+script:
+  - source .vs
+  - docker-compose run 1604
+  - docker-compose run 1404
+  - mv *xenial*.deb build/deb/xenial
+  - mv *trusty*.deb build/deb/trusty
+
+deploy:
+  provider: s3
+  access_key_id: AKIAJ5QCEUQ2WVNY7GDA
+  bucket: travis-packages.erianna.com
+  detect_encoding: true
+  skip_cleanup: true
+  acl: public_read
+  region: us-west-2
+  local_dir: build
+  secret_access_key:
+    secure: WLzk2K0fP5pSX3c+/AWoOnXxIQ2WVCF3JFYHgP/DN1sAAzw+4uJLAhG/JAFdazXexP0ArWCTqzIgtYFPDqOrdr16P9qtR+fpG8swIOdZeTRP5RTpLR77FUJPkCjsq19mT3bMDu1oEI/JxZKObgtE7MyEfMzCWcZ8kuofrkaf5KY=

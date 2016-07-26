@@ -1,0 +1,18 @@
+# docker-compose.yml
+
+'1604': 
+    build: .
+    dockerfile: .docker/xenial/Dockerfile
+    command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_debian VERSION=$VERSION"
+    volumes: 
+        - .:/data
+    working_dir: /data
+
+'1404': 
+    build: .
+    dockerfile: .docker/trusty/Dockerfile
+    command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_debian VERSION=$VERSION"
+    volumes: 
+        - .:/data
+    working_dir: /data
+
