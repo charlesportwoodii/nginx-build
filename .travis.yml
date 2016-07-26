@@ -22,8 +22,8 @@ before_install:
 script:
   - source .vs
   - docker-compose run $BUILD_IMAGE
-  - mv *xenial*.deb build/deb/xenial
-  - mv *trusty*.deb build/deb/trusty
+  - mv *xenial*.deb build/deb/xenial || true
+  - mv *trusty*.deb build/deb/trusty || true
 
 deploy:
   provider: s3
