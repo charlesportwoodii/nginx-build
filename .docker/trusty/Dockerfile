@@ -9,21 +9,10 @@ RUN apt-get install wget m4 -y
 RUN apt-get update
 RUN apt-get install make automake g++ autoconf build-essential zlib1g-dev libpcre3 libpcre3-dev libluajit-5.1-common libgeoip-dev geoip-database libluajit-5.1-dev luajit unzip git libgmp-dev libunbound-dev m4 python2.7 python-dev ruby ruby-dev apt-transport-https bc lsb-release gnutls-bin -y
 
-
-# Add our deb repository
-RUN sh -c 'echo "deb https://deb.erianna.com trusty main" > /etc/apt/sources.list.d/deb.erianna.com.list'
-
-# Install GNUPG2 for ECDSA key support
-RUN apt-get --allow-unauthenticated update
-RUN apt-get --allow-unauthenticated install gnupg2 gnutls3 -y
-RUN gpg --version
-
-RUN ldconfig
-
-# Download ECC key from Keybase
-RUN wget --quiet -O - https://keybase.io/charlesportwood/key.asc | apt-key add -
-RUN apt-get update
-RUN apt-get install libbrotli luajit-2.0 -y
+RUN wget https://deb.erianna.com/amd64/trusty/libbrotli_0-1~trusty_amd64.deb
+RUN wget https://deb.erianna.com/amd64/trusty/luajit-2.0_2.0-1~trusty_amd64.deb
+RUN dpkg -i libbrotli_0-1~trusty_amd64.deb
+RUN dpkg -i luajit-2.0_2.0-1~trusty_amd64.deb
 
 # Install FPM
 RUN gem install fpm
