@@ -1,4 +1,10 @@
 sudo: required
+dist: trusty
+
+env:
+  - BUILD_IMAGE=1604
+  - BUILD_IMAGE=1404
+  
 language: ruby
 
 services:
@@ -11,12 +17,11 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - mkdir -p build/deb/trusty build/deb/xenial build/rpm/CentOS/7/x86_64
   - source .vs
-  - docker-compose build
+  - docker-compose build $BUILD_IMAGE
 
 script:
   - source .vs
-  - docker-compose run 1604
-  - docker-compose run 1404
+  - docker-compose run $BUILD_IMAGE
   - mv *xenial*.deb build/deb/xenial
   - mv *trusty*.deb build/deb/trusty
 
