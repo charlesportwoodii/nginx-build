@@ -14,7 +14,7 @@ RUN sh -c 'echo "deb https://deb.erianna.com xenial main" > /etc/apt/sources.lis
 
 # Install GNUPG2 for ECDSA key support
 RUN apt-get --allow-unauthenticated update
-RUN apt-get --allow-unauthenticated install gnupg2 -y
+RUN apt-get --allow-unauthenticated install gnupg2 gnutls3 -y
 RUN gpg --version
 
 RUN ldconfig
