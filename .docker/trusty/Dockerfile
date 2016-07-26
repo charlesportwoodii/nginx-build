@@ -7,7 +7,7 @@ RUN apt-get install wget m4 -y
 
 # Install build tools
 RUN apt-get update
-RUN apt-get install make automake g++ autoconf build-essential zlib1g-dev libpcre3 libpcre3-dev libluajit-5.1-common libgeoip-dev geoip-database libluajit-5.1-dev luajit unzip git libgmp-dev libunbound-dev m4 python2.7 python-dev ruby ruby-dev apt-transport-https bc -y
+RUN apt-get install make automake g++ autoconf build-essential zlib1g-dev libpcre3 libpcre3-dev libluajit-5.1-common libgeoip-dev geoip-database libluajit-5.1-dev luajit unzip git libgmp-dev libunbound-dev m4 python2.7 python-dev ruby ruby-dev apt-transport-https bc lsb-release -y
 
 # Add our deb repository
 RUN sh -c 'echo "deb https://deb.erianna.com xenial main" > /etc/apt/sources.list.d/deb.erianna.com.list'
