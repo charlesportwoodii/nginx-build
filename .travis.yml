@@ -29,5 +29,8 @@ deploy:
   acl: public_read
   region: us-west-2
   local_dir: build
+  on:
+    all_branches: true
+    repo: charlesportwoodii/nginx-build
   secret_access_key:
     secure: WLzk2K0fP5pSX3c+/AWoOnXxIQ2WVCF3JFYHgP/DN1sAAzw+4uJLAhG/JAFdazXexP0ArWCTqzIgtYFPDqOrdr16P9qtR+fpG8swIOdZeTRP5RTpLR77FUJPkCjsq19mT3bMDu1oEI/JxZKObgtE7MyEfMzCWcZ8kuofrkaf5KY=
