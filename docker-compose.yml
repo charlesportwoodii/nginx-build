@@ -1,18 +1,21 @@
 # docker-compose.yml
 
-'1604': 
-    build: .
-    dockerfile: .docker/xenial/Dockerfile
-    command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_debian VERSION=$VERSION"
-    volumes: 
-        - .:/data
-    working_dir: /data
+version: '2'
+services:
 
-'1404': 
-    build: .
-    dockerfile: .docker/trusty/Dockerfile
-    command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_debian VERSION=$VERSION"
-    volumes: 
-        - .:/data
-    working_dir: /data
+    trusty: 
+        image: charlesportwoodii/docker-images:trusty
+        container_name: trusty_x64
+        command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_debian VERSION=$VERSION"
+        volumes: 
+            - .:/data
+        working_dir: /data
+
+    xenial:
+        image: charlesportwoodii/docker-images:xenial
+        container_name: xenial_x64
+        command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_debian VERSION=$VERSION"
+        volumes: 
+            - .:/data
+        working_dir: /data
 
