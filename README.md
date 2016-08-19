@@ -4,26 +4,18 @@
 
 This package helps you quickly and easily build Nginx and Nginx Mainline on your system. This package bundles several commonly used Nginx and OpenResty modules, as well as the most up to date OpenSSL and PCRE versions. If this package doens't help you install or package Nginx, there's a bug in this package.
 
+Package building is done within an isolated docker container via docker-compose (1.6.0)
+
 ## Debian Builds
 Tested on Ubuntu 12.04, Ubuntu 14.04, Ubuntu 16.04
 
-### Dependencies
-
-1. Install `luajit` and `libbrotli`.
-
-These packages are available at the following locations, and come provided with a simple build system.
-
-```bash
-https://github.com/charlesportwoodii/luajit
-https://github.com/charlesportwoodii/libbrotli
 ```
-
-2. Install `apt` dependencies:
-```bash
-sudo apt-get install make automake g++ autoconf build-essential zlib1g-dev libpcre3 libpcre3-dev libluajit-5.1-common luajit libgeoip-dev geoip-database libluajit-5.1-dev luajit unzip git checkinstall libgmp-dev libunbound-dev m4 python2.7 python-dev
+docker-compose run <trusty|xenial>
 ```
 
 ## RedHat Builds
+
+> These instructions will soon be replaced by a `docker-compose` command.
 
 1. Install `luajit` and `libbrotli`.
 
@@ -40,7 +32,7 @@ sudo yum install make automake autoconf g++ build-essential glib2-devel glibc-de
 sudo yum group install "Development Tools"
 ```
 
-## Building
+### Building
 
 Nginx can be built using the following commands:
 ```bash
@@ -51,7 +43,7 @@ make build VERISON=<nginx_version>
 
 Where ```<version>``` corresponds to the Nginx build version you want build
 
-## Packaging
+### Packaging
 
 Packaging is performed through [FPM](https://github.com/jordansissel/fpm)
 
