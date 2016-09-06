@@ -4,7 +4,8 @@ dist: trusty
 env:
   - BUILD_IMAGE=xenial
   - BUILD_IMAGE=trusty
-  
+  - BUILD_IMAGE=centos7
+
 language: generic
 
 services:
@@ -16,14 +17,14 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - mkdir -p build/deb/trusty build/deb/xenial build/rpm/CentOS/7/x86_64
-  - source .vs
-  - docker-compose build $BUILD_IMAGE
 
 script:
-  - source .vs
+  - if [ -n "$TRAVIS_TAG" ]; then export VERSION=$( cut -d '-' -f 1 <<< "$TRAVIS_TAG" ) export RELEASEVER=$( cut -d '-' -f 2 <<< "$TRAVIS_TAG" ); echo "Setting versions via TravisCI Tag"; fi
+  - echo -e "export VERSION=$VERSION\nexport RELEASEVER=$RELEASEVER\n" > .vs
+  - cat .vs
   - docker-compose run $BUILD_IMAGE
-  - mv *xenial*.deb build/deb/xenial || true
-  - mv *trusty*.deb build/deb/trusty || true
+  - if [ "$BUILD_IMAGE" == "trusty" ] || [ "$BUILD_IMAGE" == "trusty" ]; then mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE; fi
+  - if [ "$BUILD_IMAGE" == "centos7" ]; then mv *.rpm build/rpm/CentOS/7/x86_64; fi
 
 deploy:
   provider: s3
@@ -35,7 +36,8 @@ deploy:
   region: us-west-2
   local_dir: build
   on:
-    all_branches: true
+    tags: true
+    all_branches: false
     repo: charlesportwoodii/nginx-build
   secret_access_key:
     secure: WLzk2K0fP5pSX3c+/AWoOnXxIQ2WVCF3JFYHgP/DN1sAAzw+4uJLAhG/JAFdazXexP0ArWCTqzIgtYFPDqOrdr16P9qtR+fpG8swIOdZeTRP5RTpLR77FUJPkCjsq19mT3bMDu1oEI/JxZKObgtE7MyEfMzCWcZ8kuofrkaf5KY=

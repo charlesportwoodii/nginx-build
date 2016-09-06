@@ -134,6 +134,7 @@ nginx:
 	cd /tmp/nginx-$(VERSION) && \
 	export LUAJIT_LIB=/usr/local/lib && \
  	export LUAJIT_INC=/usr/local/include/luajit-2.0 && \
+	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	./configure \
 		--with-http_geoip_module \
 		--with-http_realip_module \

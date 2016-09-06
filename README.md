@@ -1,62 +1,29 @@
 # Build Scripts for Nginx
 
-[![TravisCI](https://img.shields.io/travis/charlesportwoodii/nginx-build.svg?style=flat-square&branch=mainline "TravisCI")](https://travis-ci.org/charlesportwoodii/nginx-build)
+[![Mainline Builds](https://img.shields.io/travis/charlesportwoodii/nginx-build.svg?style=flat-square&branch=mainline "TravisCI (Mainline Builds)")](https://travis-ci.org/charlesportwoodii/nginx-build)
+[![Stable Builds](https://img.shields.io/travis/charlesportwoodii/nginx-build.svg?style=flat-square&branch=stable "TravisCI (Stable Builds)")](https://travis-ci.org/charlesportwoodii/nginx-build)
 
 This package helps you quickly and easily build Nginx and Nginx Mainline on your system. This package bundles several commonly used Nginx and OpenResty modules, as well as the most up to date OpenSSL and PCRE versions. If this package doens't help you install or package Nginx, there's a bug in this package.
 
-Package building is done within an isolated docker container via docker-compose (1.6.0)
 
-## Debian Builds
-Tested on Ubuntu 12.04, Ubuntu 14.04, Ubuntu 16.04
+## Building & Packaging
+> Tested on Ubuntu 14.04, Ubuntu 16.04, CentOS7
 
+The preferred way of building PHP is to use build and package them within Docker, and then to install PHP from the packages it provides. This allows you to build PHP in an environment isolated from your own, and allows you to install PHP through your package manager, rather than through source. This approach requires both `Docker` and `docker-compose` to be installed. (see https://docs.docker.com/).
+
+1. Install Docker (https://docs.docker.com/engine/installation/)
+2. Install Docker Composer 1.8.0+ (https://docs.docker.com/compose/install/)
+3. Create a source file that specifies the PHP version you want to build for. This file is called `.vs`
 ```
-docker-compose run <trusty|xenial>
+export VERSION=<NGINX_VERSION>
+export RELEASEVER=1
 ```
-
-## RedHat Builds
-
-> These instructions will soon be replaced by a `docker-compose` command.
-
-1. Install `luajit` and `libbrotli`.
-
-These packages are available at the following locations, and come provided with a simple build system.
-
-```bash
-https://github.com/charlesportwoodii/luajit
-https://github.com/charlesportwoodii/libbrotli
+3. Build PHP-FPM by running `docker-compose`, and specifying the platform you want to build for
+```
+docker-compose run <truty|xenial|centos7>
 ```
 
-2. Install `yum` dependencies:
-```bash
-sudo yum install make automake autoconf g++ build-essential glib2-devel glibc-devel git libmcrypt-devel libmcrypt gcc libtool libicu-devel gcc-c++ geoip-devel
-sudo yum group install "Development Tools"
-```
-
-### Building
-
-Nginx can be built using the following commands:
-```bash
-git clone https://github.com/charlesportwoodii/nginx-build
-cd nginx-build
-make build VERISON=<nginx_version>
-```
-
-Where ```<version>``` corresponds to the Nginx build version you want build
-
-### Packaging
-
-Packaging is performed through [FPM](https://github.com/jordansissel/fpm)
-
-```bash
-gem install fpm
-```
-
-Once FPM is installed, you can package your application either for debian or rpm by running the following commands, respectively
-
-```bash
-make fpm_debian VERSION=<nginx_version>
-make fpm_rpm VERSION=<nginx_version>
-```
+> Note all packages are build for x86_64. x86, armv6l, and armv7l images are not supported.
 
 ### STABLE vs MAINLINE
 

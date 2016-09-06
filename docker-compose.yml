@@ -19,3 +19,10 @@ services:
             - .:/data
         working_dir: /data
 
+    centos7:
+        image: charlesportwoodii/docker-images:centos7
+        container_name: centos7_x86_64
+        command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_rpm VERSION=$VERSION"
+        volumes: 
+            - .:/data
+        working_dir: /data
