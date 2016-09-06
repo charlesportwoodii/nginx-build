@@ -1,7 +1,6 @@
 # Build Scripts for Nginx
 
-[![Mainline Builds](https://img.shields.io/travis/charlesportwoodii/nginx-build.svg?style=flat-square&branch=mainline "TravisCI (Mainline Builds)")](https://travis-ci.org/charlesportwoodii/nginx-build)
-[![Stable Builds](https://img.shields.io/travis/charlesportwoodii/nginx-build.svg?style=flat-square&branch=stable "TravisCI (Stable Builds)")](https://travis-ci.org/charlesportwoodii/nginx-build)
+[![Master Builds](https://img.shields.io/travis/charlesportwoodii/nginx-build.svg?style=flat-square&branch=master "TravisCI (Master Builds)")](https://travis-ci.org/charlesportwoodii/nginx-build)
 
 This package helps you quickly and easily build Nginx and Nginx Mainline on your system. This package bundles several commonly used Nginx and OpenResty modules, as well as the most up to date OpenSSL and PCRE versions. If this package doens't help you install or package Nginx, there's a bug in this package.
 
