@@ -6,11 +6,9 @@ which systemctl
 if [ "$?" == 1 ]
 then
     $(which service) nginx stop
-    rm -rf /etc/init.d/nginx
 else
     systemctl stop nginx.service
     systemctl disable nginx.service
-    rm -rf /lib/systemd/system/nginx.service
 fi
 
 exit 0
