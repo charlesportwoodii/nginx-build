@@ -241,9 +241,10 @@ fpm_debian: pre_package
 		--depends "geoip-database > 0" \
 		--deb-systemd-restart-after-upgrade \
 		--template-scripts \
+		--deb-no-auto-config-file \
 		--before-install $(SCRIPTPATH)/debian/preinstall-pak \
 		--after-install $(SCRIPTPATH)/debian/postinstall-pak \
-		--before-remove $(SCRIPTPATH)/debian/preremove-pak 
+		--before-remove $(SCRIPTPATH)/debian/preremove-pak
 
 fpm_rpm: pre_package
 	echo "Packaging Nginx for RPM"
