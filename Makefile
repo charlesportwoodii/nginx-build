@@ -62,15 +62,20 @@ openssl:
 	cd /tmp/nginx-$(VERSION) && \
 	wget https://www.openssl.org/source/openssl-$(OPENSSLVERSION).tar.gz && \
 	tar -xf openssl-$(OPENSSLVERSION).tar.gz
+	
+	if [[ "$(ARCH)" == "arm"* ]]; then \
+		cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION) && \
+		./config --prefix=$(OPENSSL_PATH) no-shared enable-tlsext no-ssl2 no-ssl3; \
+	else \
+		cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION) && \
+		git clone https://github.com/cloudflare/sslconfig && \
+		cp sslconfig/patches/openssl__chacha20_poly1305_draft_and_rfc_ossl102g.patch . && \
+		patch -p1 < openssl__chacha20_poly1305_draft_and_rfc_ossl102g.patch 2>/dev/null; true && \
+		./config --prefix=$(OPENSSL_PATH) no-shared enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3; \
+	fi 
 
-	# Apply Cloudflare Chacha20-Poly1305 patch to OpenSSL
-	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
-	git clone https://github.com/cloudflare/sslconfig && \
-	cp sslconfig/patches/openssl__chacha20_poly1305_draft_and_rfc_ossl102g.patch . && \
-	patch -p1 < openssl__chacha20_poly1305_draft_and_rfc_ossl102g.patch 2>/dev/null; true # Ignore 
 
 	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
-	./config --prefix=/tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION).openssl no-shared enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3 && \
 	make depend
 
 nginx:
