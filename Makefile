@@ -16,7 +16,7 @@ IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
 ifeq ($(IS_ARM), 1)
 EXTRA_ARGS="--with-openssl-opt='enable-tlsext no-ssl2 no-ssl3'"
 else
-EXTRA_ARGS='--add-module=modules/ngx_pagespeed' '--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3"'
+EXTRA_ARGS='--add-module=modules/ngx_pagespeed' '--with-openssl-opt=enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'
 endif
 
 major=$(shell echo $(VERSION) | cut -d. -f1)
@@ -186,8 +186,8 @@ nginx:
 		$(EXTRA_ARGS)
 
 	# Make
-#	cd /tmp/nginx-$(VERSION) && \
-#	make -j$(CORES)
+	cd /tmp/nginx-$(VERSION) && \
+	make -j$(CORES)
 
 pre_package:
 	# Clean the old build directory
