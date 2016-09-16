@@ -13,6 +13,12 @@ RELEASE=$(shell lsb_release --codename | cut -f2)
 ARCH=$(shell arch)
 IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
 
+ifeq ($(IS_ARM), 1)
+EXTRA_ARGS="--with-openssl-opt='enable-tlsext no-ssl2 no-ssl3'"
+else
+EXTRA_ARGS="--add-module=modules/ngx_pagespeed --with-openssl-opt='enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'"
+endif
+
 major=$(shell echo $(VERSION) | cut -d. -f1)
 minor=$(shell echo $(VERSION) | cut -d. -f2)
 micro=$(shell echo $(VERSION) | cut -d. -f3)
@@ -139,12 +145,6 @@ nginx:
 	# Nginx Cache Purge Module
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone --depth=1 -b 2.3 https://github.com/FRiCKLE/ngx_cache_purge
-
-ifeq ($(IS_ARM), 1)
-EXTRA_ARGS="--with-openssl-opt='enable-tlsext no-ssl2 no-ssl3'"
-else
-EXTRA_ARGS="--add-module=modules/ngx_pagespeed --with-openssl-opt='enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'"
-endif
 
 	# Configure
 	cd /tmp/nginx-$(VERSION) && \
