@@ -10,6 +10,14 @@ RELEASEVER?=1
 SCRIPTPATH=$(shell pwd -P)
 CORES=$(shell grep -c ^processor /proc/cpuinfo)
 RELEASE=$(shell lsb_release --codename | cut -f2)
+ARCH=$(shell arch)
+IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
+
+ifeq ($(IS_ARM), 1)
+EXTRA_ARGS="--with-openssl-opt='enable-tlsext no-ssl2 no-ssl3'"
+else
+EXTRA_ARGS="--add-module=modules/ngx_pagespeed --with-openssl-opt='enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'"
+endif
 
 major=$(shell echo $(VERSION) | cut -d. -f1)
 minor=$(shell echo $(VERSION) | cut -d. -f2)
@@ -74,7 +82,6 @@ openssl:
 		./config --prefix=$(OPENSSL_PATH) no-shared enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3; \
 	fi 
 
-
 	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
 	make depend
 
@@ -119,14 +126,18 @@ nginx:
 	git clone "https://github.com/yaoweibin/ngx_http_substitutions_filter_module"
 
 	# Nginx Pagespeed
-	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone --depth=1 https://github.com/pagespeed/ngx_pagespeed && \
-	cd /tmp/nginx-$(VERSION)/modules/ngx_pagespeed && \
-	git fetch --tags && \
-	git checkout v$(NPS_VERSION)-beta && \
-	wget https://dl.google.com/dl/page-speed/psol/$(NPS_VERSION).tar.gz && \
-	tar -xzvf $(NPS_VERSION).tar.gz 
-
+	if [[ "$(ARCH)" == "arm"* ]]; then \
+		echo "Pagespeed not supported on ARM"; \
+	else \
+		cd /tmp/nginx-$(VERSION)/modules && \
+		git clone --depth=1 https://github.com/pagespeed/ngx_pagespeed && \
+		cd /tmp/nginx-$(VERSION)/modules/ngx_pagespeed && \
+		git fetch --tags && \
+		git checkout v$(NPS_VERSION)-beta && \
+		wget https://dl.google.com/dl/page-speed/psol/$(NPS_VERSION).tar.gz && \
+		tar -xzvf $(NPS_VERSION).tar.gz; \
+	fi 
+	
 	# Length Hiding Modules
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/nulab/nginx-length-hiding-filter-module
@@ -170,10 +181,9 @@ nginx:
 		--add-module=modules/ngx_brotli \
 		--add-module=modules/ngx_devel_kit \
 		--add-module=modules/lua-nginx-module \
-		--add-module=modules/ngx_pagespeed \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
-		--with-openssl-opt="enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3"
+		$(EXTRA_ARGS)
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
