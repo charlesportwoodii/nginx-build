@@ -112,7 +112,7 @@ nginx:
 
 	# Google Brotli
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone "https://github.com/google/ngx_brotli"
+	git clone "https://github.com/google/ngx_brotli" --recursive
 
 	# Openresty Echo Module
 	cd /tmp/nginx-$(VERSION)/modules && \
