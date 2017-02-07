@@ -13,14 +13,15 @@ The preferred way of building PHP is to use build and package them within Docker
 1. Install Docker (https://docs.docker.com/engine/installation/)
 2. Install Docker Composer 1.8.0+ (https://docs.docker.com/compose/install/)
 3. Create a source file that specifies the PHP version you want to build for. This file is called `.vs`
-```
-export VERSION=<NGINX_VERSION>
-export RELEASEVER=1
-```
+	```
+	export VERSION=<NGINX_VERSION>
+	export RELEASEVER=1
+	```
+
 3. Build PHP-FPM by running `docker-compose`, and specifying the platform you want to build for
-```
-docker-compose run <truty|xenial|centos7>
-```
+	```
+	docker-compose run <truty|xenial|centos7|rhel7>
+	```
 
 > Note all packages are build for x86_64. x86, armv6l, and armv7l images are not supported.
 
