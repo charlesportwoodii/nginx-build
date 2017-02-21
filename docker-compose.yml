@@ -4,7 +4,7 @@ version: '2'
 services:
 
     trusty: 
-        image: charlesportwoodii/docker-images:trusty
+        image: charlesportwoodii/trusty:build
         container_name: trusty_x64
         command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_debian VERSION=$VERSION"
         volumes: 
@@ -12,7 +12,7 @@ services:
         working_dir: /data
 
     xenial:
-        image: charlesportwoodii/docker-images:xenial
+        image: charlesportwoodii/xenial:build
         container_name: xenial_x64
         command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_debian VERSION=$VERSION"
         volumes: 
@@ -20,7 +20,7 @@ services:
         working_dir: /data
 
     centos7:
-        image: charlesportwoodii/docker-images:centos7
+        image: charlesportwoodii/centos7:build
         container_name: centos7_x86_64
         command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_rpm VERSION=$VERSION"
         volumes: 
@@ -28,7 +28,7 @@ services:
         working_dir: /data
     
     rhel7:
-        image: charlesportwoodii/docker-images:rhel7
+        image: charlesportwoodii/rhel7:build
         container_name: rhel7_x86_64
         command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_rpm VERSION=$VERSION"
         volumes: 

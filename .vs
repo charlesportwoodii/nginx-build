@@ -1,2 +1,0 @@
-export VERSION=1.11.5
-export RELEASEVER=1
