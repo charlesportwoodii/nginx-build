@@ -92,9 +92,8 @@ nginx:
 
 	# Nginx Lua Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/openresty/lua-nginx-module && \
-	cd lua-nginx-module && \
-	git checkout v0.10.2
+	git clone https://github.com/defanator/lua-nginx-module -b issue1016 && \
+	cd lua-nginx-module
 
 	# Nginx Devel Kit
 	cd /tmp/nginx-$(VERSION)/modules && \
@@ -116,7 +115,7 @@ nginx:
 
 	# Openresty Echo Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone "https://github.com/openresty/echo-nginx-module"
+	git clone "https://github.com/defanator/echo-nginx-module" -b issue64
 
 	# OpenResty Headers More
 	cd /tmp/nginx-$(VERSION)/modules && \
@@ -174,7 +173,6 @@ nginx:
 		--http-log-path=/var/log/nginx/access.log \
 		--add-module=modules/ngx_http_enhanced_memcached_module \
 		--add-module=modules/redis2-nginx-module \
-		--add-module=modules/echo-nginx-module \
 		--add-module=modules/headers-more-nginx-module \
 		--add-module=modules/nginx-length-hiding-filter-module \
 		--add-module=modules/ngx_cache_purge \
@@ -186,6 +184,7 @@ nginx:
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
 		$(EXTRA_ARGS)
 
+	#--add-module=modules/echo-nginx-module
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
 	make -j$(CORES)
