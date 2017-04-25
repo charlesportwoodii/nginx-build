@@ -92,7 +92,7 @@ nginx:
 
 	# Nginx Lua Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/defanator/lua-nginx-module -b master && \
+	git clone https://github.com/openresty/lua-nginx-module -b master && \
 	cd lua-nginx-module
 
 	# Nginx Devel Kit
