@@ -248,7 +248,7 @@ fpm_debian: pre_package
 		-m "charlesportwoodii@erianna.com" \
 		--license "BSD" \
 		--url https://github.com/charlesportwoodii/nginx-build \
-		--description "$(RELEASENAME), $(VERSION)\n$(description)" \
+		--description "$(RELEASENAME), $(VERSION): https://raw.githubusercontent.com/charlesportwoodii/nginx-build/master/debian/description-pak" \
 		--vendor "Charles R. Portwood II" \
 		--depends "luajit > 0" \
 		--depends "libluajit-5.1-common > 0" \
@@ -277,7 +277,7 @@ fpm_rpm: pre_package
 		-m "charlesportwoodii@erianna.com" \
 		--license "BSD" \
 		--url https://github.com/charlesportwoodii/nginx-build \
-		--description "$(RELEASENAME), $(VERSION)\n$(description)" \
+		--description "$(RELEASENAME), $(VERSION): https://raw.githubusercontent.com/charlesportwoodii/nginx-build/master/debian/description-pak" \
 		--vendor "Charles R. Portwood II" \
 		--depends "luajit > 0" \
 		--depends "libbrotli > 0" \

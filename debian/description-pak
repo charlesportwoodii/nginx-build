@@ -1,13 +1,27 @@
-nginx web/proxy server + OpenResty components
- Nginx ("engine X") is a high-performance web and reverse proxy server
+ nginx web/proxy server + OpenResty components + extensions
+ Nginx ('engine X') is a high-performance web and reverse proxy server
  created by Igor Sysoev. It can be used both as a standalone web server
  and as a proxy to reduce the load on back-end HTTP or mail servers.
+ .
+ This package is a opinionated build of Nginx, and is designed to get you up
+ and running as quickly as possible, while providing a vast array of tools
+ to perform almost any task you might need Nginx to perform.
+ .
+ UPGRADING:
+   - Existing implementations should append 'include /etc/nginx/conf/modules.conf'
+     to /etc/nginx/conf/nginx.conf to preserve existing functionality.
+ .
+ WHATS NEW:
+   - Extra modules are now dynamic instead of static.
+   - ssl.conf TLS configuration updated to SSLLabs minimum recommendation
+   - Description is now loaded into debian/rpm packages
  .
  This package provides a statically compiled version of nginx with the 
  complete set of standard modules included, in addition to several 
  OpenResty modules.
  .
- This package include pre-bundled version of PCRE 8.40 , and OpenSSL 1.0.2k
+ This package includes the latest version of OpenSSL 1.0.2 and PCRE 8.xx with 
+ Cloudflare's ChaCha20+Poly1305 Patch.
  .
  Included with this package is a strong ssl.conf file which includes
  a recommended SSL config that can be included by default.
@@ -15,6 +29,17 @@ nginx web/proxy server + OpenResty components
  CORE MODULES: Nginx Core, GeopIP, SSL, GZIP, RealIP, Gunzip, Addition,
  Auth Request, Stub, HTTP2, Sub, Mail, Mail SSL, IPv6, MP4
  .
- EXTRA MODULES: Nginx Enhanced Memcache Module, Redis2, Lua, Echo, 
- Headers More, Length Hiding Header, Cache Purge, Nginx Brotli, Pagespeed
- These modules are provided as dynamic modules.
+ EXTRA MODULES:
+   Extra modules are provided as dynamic modules rather than static
+   - Lua: https://github.com/openresty/lua-nginx-module
+   - Devel Kit: https://github.com/simpl/ngx_devel_kit
+   - Enhanced Memcache: https://github.com/bpaquet/ngx_http_enhanced_memcached_module
+   - Redis2: https://github.com/openresty/redis2-nginx-module
+   - Brotli: https://github.com/google/ngx_brotli
+   - Echo: https://github.com/defanator/echo-nginx-module
+   - Headers more: https://github.com/openresty/headers-more-nginx-module
+   - HTTP Subs: https://github.com/yaoweibin/ngx_http_substitutions_filter_module
+   - Google Pagespeed: ttps://github.com/pagespeed/ngx_pagespeed
+   - Length Hiding: https://github.com/nulab/nginx-length-hiding-filter-module
+   - Cache Purge: https://github.com/FRiCKLE/ngx_cache_purge
+
