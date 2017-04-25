@@ -19,6 +19,7 @@ else
 EXTRA_ARGS='--add-dynamic-module=modules/ngx_pagespeed' '--with-openssl-opt=enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'
 endif
 
+description=$(shell cat debian/description-pak)
 major=$(shell echo $(VERSION) | cut -d. -f1)
 minor=$(shell echo $(VERSION) | cut -d. -f2)
 micro=$(shell echo $(VERSION) | cut -d. -f3)
@@ -152,6 +153,7 @@ nginx:
  	export LUAJIT_INC=/usr/local/include/luajit-2.0 && \
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	./configure \
+		--with-ld-opt="-Wl,-E" \
 		--with-http_geoip_module \
 		--with-http_realip_module \
 		--with-http_ssl_module \
@@ -246,7 +248,7 @@ fpm_debian: pre_package
 		-m "charlesportwoodii@erianna.com" \
 		--license "BSD" \
 		--url https://github.com/charlesportwoodii/nginx-build \
-		--description "$(RELEASENAME), $(VERSION)" \
+		--description "$(RELEASENAME), $(VERSION)\n$(description)" \
 		--vendor "Charles R. Portwood II" \
 		--depends "luajit > 0" \
 		--depends "libluajit-5.1-common > 0" \
@@ -255,6 +257,7 @@ fpm_debian: pre_package
 		--depends "luajit-2.0 > 0" \
 		--depends "geoip-database > 0" \
 		--deb-systemd-restart-after-upgrade \
+		--deb-compression gz
 		--template-scripts \
 		--force \
 		--no-deb-auto-config-files \
@@ -274,7 +277,7 @@ fpm_rpm: pre_package
 		-m "charlesportwoodii@erianna.com" \
 		--license "BSD" \
 		--url https://github.com/charlesportwoodii/nginx-build \
-		--description "$(RELEASENAME), $(VERSION)" \
+		--description "$(RELEASENAME), $(VERSION)\n$(description)" \
 		--vendor "Charles R. Portwood II" \
 		--depends "luajit > 0" \
 		--depends "libbrotli > 0" \

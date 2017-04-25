@@ -22,6 +22,10 @@ if [ ! -d /etc/nginx/conf/ssl ]; then
 	$(which mkdir) -p /etc/nginx/conf/ssl
 fi
 
+if [ ! -f /etc/nginx/conf/modules.conf ]; then
+	$(which cp) /etc/nginx/conf/modules.conf /etc/nginx/conf/modules.conf;
+fi
+
 if [ ! -f /etc/nginx/conf/ssl/dhparams.pem ]; then
 	openssl dhparam -out /etc/nginx/conf/ssl/dhparams.pem 2048
 fi
