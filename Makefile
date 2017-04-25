@@ -3,7 +3,7 @@ SHELL := /bin/bash
 # Dependency Versions
 PCREVERSION?=8.40
 OPENSSLVERSION?=1.0.2k
-NPS_VERSION?=1.11.33.2
+NPS_VERSION?=1.12.34.2
 RELEASEVER?=1
 
 # Bash data
@@ -16,7 +16,7 @@ IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
 ifeq ($(IS_ARM), 1)
 EXTRA_ARGS="--with-openssl-opt='enable-tlsext no-ssl2 no-ssl3'"
 else
-EXTRA_ARGS='--add-module=modules/ngx_pagespeed' '--with-openssl-opt=enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'
+EXTRA_ARGS='--add-dynamic-module=modules/ngx_pagespeed' '--with-openssl-opt=enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'
 endif
 
 major=$(shell echo $(VERSION) | cut -d. -f1)
@@ -92,14 +92,14 @@ nginx:
 
 	# Nginx Lua Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/defanator/lua-nginx-module -b issue1016 && \
+	git clone https://github.com/defanator/lua-nginx-module -b master && \
 	cd lua-nginx-module
 
 	# Nginx Devel Kit
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/simpl/ngx_devel_kit && \
 	cd ngx_devel_kit && \
-	git checkout v0.2.19
+	git checkout v0.3.0
 
 	# Enhanced Memcached
 	cd /tmp/nginx-$(VERSION)/modules && \
@@ -107,7 +107,7 @@ nginx:
 
 	# Redis2
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/openresty/redis2-nginx-module
+	git clone https://github.com/openresty/redis2-nginx-module -b v0.14
 
 	# Google Brotli
 	cd /tmp/nginx-$(VERSION)/modules && \
@@ -115,11 +115,11 @@ nginx:
 
 	# Openresty Echo Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone "https://github.com/defanator/echo-nginx-module" -b issue64
+	git clone "https://github.com/defanator/echo-nginx-module" -b master
 
 	# OpenResty Headers More
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone "https://github.com/openresty/headers-more-nginx-module"
+	git clone "https://github.com/openresty/headers-more-nginx-module" -b v0.32
 
 	# HTTP Subs module
 	cd /tmp/nginx-$(VERSION)/modules && \
@@ -134,13 +134,13 @@ nginx:
 		cd /tmp/nginx-$(VERSION)/modules/ngx_pagespeed && \
 		git fetch --tags && \
 		git checkout v$(NPS_VERSION)-beta && \
-		wget https://dl.google.com/dl/page-speed/psol/$(NPS_VERSION).tar.gz && \
-		tar -xzvf $(NPS_VERSION).tar.gz; \
+		wget https://dl.google.com/dl/page-speed/psol/$(NPS_VERSION)-x64.tar.gz && \
+		tar -xzvf $(NPS_VERSION)-x64.tar.gz; \
 	fi 
 	
 	# Length Hiding Modules
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/nulab/nginx-length-hiding-filter-module
+	git clone https://github.com/nulab/nginx-length-hiding-filter-module -b 1.1.0
 
 	# Nginx Cache Purge Module
 	cd /tmp/nginx-$(VERSION)/modules && \
@@ -171,15 +171,15 @@ nginx:
 		--error-log-path=/var/log/nginx/error.log \
 		--pid-path=/var/run/nginx.pid \
 		--http-log-path=/var/log/nginx/access.log \
-		--add-module=modules/ngx_http_enhanced_memcached_module \
-		--add-module=modules/redis2-nginx-module \
-		--add-module=modules/headers-more-nginx-module \
-		--add-module=modules/nginx-length-hiding-filter-module \
-		--add-module=modules/ngx_cache_purge \
-		--add-module=modules/ngx_http_substitutions_filter_module \
-		--add-module=modules/ngx_brotli \
-		--add-module=modules/ngx_devel_kit \
-		--add-module=modules/lua-nginx-module \
+		--add-dynamic-module=modules/ngx_http_enhanced_memcached_module \
+		--add-dynamic-module=modules/redis2-nginx-module \
+		--add-dynamic-module=modules/headers-more-nginx-module \
+		--add-dynamic-module=modules/nginx-length-hiding-filter-module \
+		--add-dynamic-module=modules/ngx_cache_purge \
+		--add-dynamic-module=modules/ngx_http_substitutions_filter_module \
+		--add-dynamic-module=modules/ngx_brotli \
+		--add-dynamic-module=modules/ngx_devel_kit \
+		--add-dynamic-module=modules/lua-nginx-module \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
 		$(EXTRA_ARGS)
