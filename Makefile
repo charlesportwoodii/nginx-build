@@ -153,7 +153,6 @@ nginx:
  	export LUAJIT_INC=/usr/local/include/luajit-2.0 && \
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	./configure \
-		--with-ld-opt="-Wl,-E" \
 		--with-http_geoip_module \
 		--with-http_realip_module \
 		--with-http_ssl_module \
@@ -180,8 +179,8 @@ nginx:
 		--add-dynamic-module=modules/ngx_cache_purge \
 		--add-dynamic-module=modules/ngx_http_substitutions_filter_module \
 		--add-dynamic-module=modules/ngx_brotli \
-		--add-dynamic-module=modules/ngx_devel_kit \
-		--add-dynamic-module=modules/lua-nginx-module \
+		--add-module=modules/ngx_devel_kit \
+		--add-module=modules/lua-nginx-module \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
 		$(EXTRA_ARGS)
