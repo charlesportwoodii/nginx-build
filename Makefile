@@ -256,7 +256,7 @@ fpm_debian: pre_package
 		--depends "luajit-2.0 > 0" \
 		--depends "geoip-database > 0" \
 		--deb-systemd-restart-after-upgrade \
-		--deb-compression gz
+		--deb-compression gz \
 		--template-scripts \
 		--force \
 		--no-deb-auto-config-files \
