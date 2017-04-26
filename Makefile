@@ -220,6 +220,7 @@ pre_package:
 	cp $(SCRIPTPATH)/conf/scgi_params /tmp/nginx-$(VERSION)-install/etc/nginx/conf
 	cp $(SCRIPTPATH)/conf/uwsgi_params /tmp/nginx-$(VERSION)-install/etc/nginx/conf
 	cp $(SCRIPTPATH)/conf/win-utf /tmp/nginx-$(VERSION)-install/etc/nginx/conf
+	cp $(SCRIPTPATH)/conf/modules.conf /tmp/nginx-$(VERSION)-install/etc/nginx/conf/modules.conf
 
 	# Copy the LICENSE file
 	mkdir -p /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)
@@ -227,8 +228,11 @@ pre_package:
 	cp /tmp/nginx-$(VERSION)/README /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/README
 	cp /tmp/nginx-$(VERSION)/CHANGES /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/CHANGES
 
+	# Move the modules to /usr/lib/nginx instead of /etc/
+	mkdir -p /tmp/nginx-$(VERSION)-install/usr/lib/nginx
+	mv /tmp/nginx-$(VERSION)-install/etc/nginx/modules /tmp/nginx-$(VERSION)-install/usr/lib/nginx/
 	# Copy systemd file
-	mkdir -p /tmp//nginx-$(VERSION)-install/lib/systemd/system
+	mkdir -p /tmp/nginx-$(VERSION)-install/lib/systemd/system
 	cp $(SCRIPTPATH)/nginx.service /tmp/nginx-$(VERSION)-install/lib/systemd/system/nginx.service
 
 fpm_debian: pre_package
