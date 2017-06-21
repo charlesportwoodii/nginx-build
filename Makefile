@@ -181,7 +181,8 @@ nginx:
 		--add-dynamic-module=modules/ngx_brotli \
 		--add-module=modules/ngx_devel_kit \
 		--add-module=modules/lua-nginx-module \
-		--with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' --with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie' \
+		--with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
+		--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie' \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-pcre-jit \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
