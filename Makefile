@@ -3,8 +3,6 @@ SHELL := /bin/bash
 # Dependency Versions
 PCREVERSION?=8.40
 OPENSSLVERSION?=1.0.2l
-NPS_VERSION?=1.12.34.2
-NPS_DIST?=stable
 RELEASEVER?=1
 
 # Bash data
@@ -17,7 +15,7 @@ IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
 ifeq ($(IS_ARM), 1)
 EXTRA_ARGS="--with-openssl-opt='enable-tlsext no-ssl2 no-ssl3'"
 else
-EXTRA_ARGS='--add-dynamic-module=modules/ngx_pagespeed' '--with-openssl-opt=enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'
+EXTRA_ARGS='--with-openssl-opt=enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'
 endif
 
 description=$(shell cat debian/description-pak)
@@ -126,19 +124,6 @@ nginx:
 	# HTTP Subs module
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone "https://github.com/yaoweibin/ngx_http_substitutions_filter_module"
-
-	# Nginx Pagespeed
-	if [[ "$(ARCH)" == "arm"* ]]; then \
-		echo "Pagespeed not supported on ARM"; \
-	else \
-		cd /tmp/nginx-$(VERSION)/modules && \
-		git clone --depth=1 https://github.com/pagespeed/ngx_pagespeed && \
-		cd /tmp/nginx-$(VERSION)/modules/ngx_pagespeed && \
-		git fetch --tags && \
-		git checkout v$(NPS_VERSION)-$(NPS_DIST) && \
-		wget https://dl.google.com/dl/page-speed/psol/$(NPS_VERSION)-x64.tar.gz && \
-		tar -xzvf $(NPS_VERSION)-x64.tar.gz; \
-	fi 
 	
 	# Length Hiding Modules
 	cd /tmp/nginx-$(VERSION)/modules && \
