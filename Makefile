@@ -4,6 +4,7 @@ SHELL := /bin/bash
 PCREVERSION?=8.40
 OPENSSLVERSION?=1.0.2l
 NPS_VERSION?=1.12.34.2
+NPS_DIST?=stable
 RELEASEVER?=1
 
 # Bash data
@@ -134,7 +135,7 @@ nginx:
 		git clone --depth=1 https://github.com/pagespeed/ngx_pagespeed && \
 		cd /tmp/nginx-$(VERSION)/modules/ngx_pagespeed && \
 		git fetch --tags && \
-		git checkout v$(NPS_VERSION)-beta && \
+		git checkout v$(NPS_VERSION)-$(NPS_DIST) && \
 		wget https://dl.google.com/dl/page-speed/psol/$(NPS_VERSION)-x64.tar.gz && \
 		tar -xzvf $(NPS_VERSION)-x64.tar.gz; \
 	fi 
