@@ -5,6 +5,16 @@ PCREVERSION?=8.40
 OPENSSLVERSION?=1.0.2l
 RELEASEVER?=1
 
+# Module versions
+MODULE_LUA_VERSION="master"
+MODULE_DEVELKIT_VERSION="v0.3.0"
+MODULE_REDIS2_VERSION="v0.14"
+MODULE_BROTLI_VERSION="master"
+MODULE_HEADERSMORE_VERSION="v0.32"
+MODULE_HTTPSUBS_VERSION="master"
+MODULE_LENGTHHIDING_VERSION="1.1.1"
+MODULE_SETMISC_VERSION="v0.31"
+
 # Bash data
 SCRIPTPATH=$(shell pwd -P)
 CORES=$(shell grep -c ^processor /proc/cpuinfo)
@@ -92,46 +102,37 @@ nginx:
 
 	# Nginx Lua Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/openresty/lua-nginx-module -b master && \
+	git clone https://github.com/openresty/lua-nginx-module -b $(MODULE_LUA_VERSION) && \
 	cd lua-nginx-module
 
 	# Nginx Devel Kit
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/simpl/ngx_devel_kit && \
 	cd ngx_devel_kit && \
-	git checkout v0.3.0
-
-	# Enhanced Memcached
-	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/bpaquet/ngx_http_enhanced_memcached_module
+	git checkout $(MODULE_DEVELKIT_VERSION)
 
 	# Redis2
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/openresty/redis2-nginx-module -b v0.14
+	git clone https://github.com/openresty/redis2-nginx-module -b $(MODULE_REDIS2_VERSION)
 
 	# Google Brotli
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone "https://github.com/google/ngx_brotli" --recursive
-
-	# Openresty Echo Module
-	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone "https://github.com/defanator/echo-nginx-module" -b master
+	git clone https://github.com/google/ngx_brotli -b $(MODULE_BROTLI_VERSION) --recursive
 
 	# OpenResty Headers More
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone "https://github.com/openresty/headers-more-nginx-module" -b v0.32
+	git clone "https://github.com/openresty/headers-more-nginx-module" -b $(MODULE_HEADERSMORE_VERSION)
 
 	# HTTP Subs module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone "https://github.com/yaoweibin/ngx_http_substitutions_filter_module"
+	git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module -b $(MODULE_HTTPSUBS_VERSION)
 	
 	# Length Hiding Modules
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/nulab/nginx-length-hiding-filter-module -b 1.1.0
+	git clone https://github.com/nulab/nginx-length-hiding-filter-module -b $(MODULE_LENGTHHIDING_VERSION)
 
-	# Nginx Cache Purge Module
-	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone --depth=1 -b 2.3 https://github.com/FRiCKLE/ngx_cache_purge
+	cd /tmp/nginx-$(VERISON)/modules && \
+	git clone https://github.com/openresty/set-misc-nginx-module -b $(MODULE_SETMISC_VERSION)
 
 	# Configure
 	cd /tmp/nginx-$(VERSION) && \
@@ -155,23 +156,21 @@ nginx:
 		--with-mail_ssl_module \
 		--prefix=/etc/nginx \
 		--sbin-path=/usr/bin/nginx \
-		--error-log-path=/var/log/nginx/error.log \
 		--pid-path=/var/run/nginx.pid \
+		--error-log-path=/var/log/nginx/error.log \
 		--http-log-path=/var/log/nginx/access.log \
-		--add-dynamic-module=modules/ngx_http_enhanced_memcached_module \
+		--add-module=modules/ngx_devel_kit \
 		--add-dynamic-module=modules/redis2-nginx-module \
 		--add-dynamic-module=modules/headers-more-nginx-module \
 		--add-dynamic-module=modules/nginx-length-hiding-filter-module \
-		--add-dynamic-module=modules/ngx_cache_purge \
 		--add-dynamic-module=modules/ngx_http_substitutions_filter_module \
 		--add-dynamic-module=modules/ngx_brotli \
-		--add-module=modules/ngx_devel_kit \
+		--add-dynamic-module=modules/set-misc-nginx-module \
 		--add-module=modules/lua-nginx-module \
 		--with-pcre=pcre-"$(PCREVERSION)" \
 		--with-openssl=openssl-"$(OPENSSLVERSION)" \
 		$(EXTRA_ARGS)
 
-	#--add-module=modules/echo-nginx-module
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
 	make -j$(CORES)
