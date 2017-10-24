@@ -6,6 +6,8 @@ WWWDATAUSER=$(id www-data)
 if [ $? -eq 1 ]; then
     echo "Creating www-data user"
     adduser -S www-data
+    addgroup www-data
+    addgroup www-data www-data
 fi
 
 rc-service nginx stop
