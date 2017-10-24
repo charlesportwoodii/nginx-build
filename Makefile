@@ -285,7 +285,7 @@ fpm_rpm: pre_package
 		--before-remove $(SCRIPTPATH)/rpm/preremove 
 
 fpm_alpine: pre_package
-	fpm -s dir \
+	/fpm/bin/fpm -s dir \
 		-t apk \
 		-n $(RELEASENAME) \
 		-v $(VERSION)-$(RELEASEVER)~$(shell uname -m) \
@@ -303,6 +303,7 @@ fpm_alpine: pre_package
 		--depends "geoip" \
 		--depends "bash" \
 		--depends "openrc" \
+		--depends "openssl" \
 		--force \
 		-a $(shell uname -m) \
 		--before-install $(SCRIPTPATH)/alpine/pre-install \
