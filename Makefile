@@ -304,6 +304,7 @@ fpm_alpine: pre_package
 		--depends "bash" \
 		--depends "openrc" \
 		--force \
+		-a $(shell uname -m) \
 		--before-install $(SCRIPTPATH)/alpine/pre-install \
 		--after-install $(SCRIPTPATH)/alpine/post-install \
 		--before-remove $(SCRIPTPATH)/alpine/pre-deinstall
