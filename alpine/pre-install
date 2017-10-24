@@ -2,6 +2,12 @@
 
 set +e
 
+WWWDATAUSER=$(id www-data)
+if [ $? -eq 1 ]; then
+    echo "Creating www-data user"
+    adduser -S www-data
+fi
+
 rc-service nginx stop
 rc-update del nginx default
 
