@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Dependency Versions
-PCREVERSION?=8.40
+PCREVERSION?=8.41
 OPENSSLVERSION?=1.0.2l
 RELEASEVER?=1
 
@@ -21,6 +21,7 @@ CORES=$(shell grep -c ^processor /proc/cpuinfo)
 RELEASE=$(shell lsb_release --codename | cut -f2)
 ARCH=$(shell arch)
 IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
+IS_ALPINE=$(shell if [ -f /etc/alpine-release ]; then echo 1; else echo 0; fi)
 
 ifeq ($(IS_ARM), 1)
 EXTRA_ARGS="--with-openssl-opt='enable-tlsext no-ssl2 no-ssl3'"
@@ -131,7 +132,7 @@ nginx:
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/nulab/nginx-length-hiding-filter-module -b $(MODULE_LENGTHHIDING_VERSION)
 
-	cd /tmp/nginx-$(VERISON)/modules && \
+	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/openresty/set-misc-nginx-module -b $(MODULE_SETMISC_VERSION)
 
 	# Configure
@@ -218,12 +219,17 @@ pre_package:
 	mkdir -p /tmp/nginx-$(VERSION)-install/usr/lib/nginx
 	mv /tmp/nginx-$(VERSION)-install/etc/nginx/modules /tmp/nginx-$(VERSION)-install/usr/lib/nginx/
 	# Copy systemd file
+	
+
+ifeq ($(IS_ALPINE), 1)
+	mkdir -p /tmp/nginx-$(VERSION)-install/etc/init.d
+	cp $(SCRIPTPATH)/alpine/nginx.rc /tmp/nginx-$(VERSION)-install/etc/init.d
+else 
 	mkdir -p /tmp/nginx-$(VERSION)-install/lib/systemd/system
 	cp $(SCRIPTPATH)/nginx.service /tmp/nginx-$(VERSION)-install/lib/systemd/system/nginx.service
+endif
 
 fpm_debian: pre_package
-	echo "Packaging Nginx for Debian"
-
 	# Copy init.d for non systemd systems
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/init.d
 	cp $(SCRIPTPATH)/debian/init-nginx /tmp/nginx-$(VERSION)-install/etc/init.d/nginx
@@ -255,8 +261,6 @@ fpm_debian: pre_package
 		--before-remove $(SCRIPTPATH)/debian/preremove-pak 
 
 fpm_rpm: pre_package
-	echo "Packaging Nginx for RPM"
-
 	fpm -s dir \
 		-t rpm \
 		-n $(RELEASENAME) \
@@ -279,3 +283,27 @@ fpm_rpm: pre_package
 		--before-install $(SCRIPTPATH)/rpm/preinstall \
 		--after-install $(SCRIPTPATH)/rpm/postinstall \
 		--before-remove $(SCRIPTPATH)/rpm/preremove 
+
+fpm_alpine: pre_package
+	fpm -s dir \
+		-t apk \
+		-n $(RELEASENAME) \
+		-v $(VERSION)-$(RELEASEVER)~$(shell uname -m) \
+		-C /tmp/nginx-$(VERSION)-install \
+		-p $(RELEASENAME)-$(VERSION)-$(RELEASEVER)~$(shell uname -m).apk \
+		-m "charlesportwoodii@erianna.com" \
+		--license "BSD" \
+		--url https://github.com/charlesportwoodii/nginx-build \
+		--description "$(RELEASENAME), $(VERSION)" \
+		--vendor "Charles R. Portwood II" \
+		--depends "luajit" \
+		--depends "luajit-dev" \
+		--depends "libbrotli" \
+		--depends "luajit-2.0" \
+		--depends "geoip" \
+		--depends "bash" \
+		--depends "openrc" \
+		--force \
+		--before-install $(SCRIPTPATH)/alpine/pre-install \
+		--after-install $(SCRIPTPATH)/alpine/post-install \
+		--before-remove $(SCRIPTPATH)/alpine/pre-deinstall

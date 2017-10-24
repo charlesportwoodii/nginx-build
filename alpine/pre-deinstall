@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set +e
+
+rc-service nginx stop
+rc-update del nginx default
+
+exit 0

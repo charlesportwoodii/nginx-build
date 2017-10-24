@@ -1,36 +1,49 @@
 # docker-compose.yml
 
-version: '2'
+version: '3.3'
 services:
-
     trusty: 
         image: charlesportwoodii/trusty:build
-        container_name: trusty_x64
-        command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_debian VERSION=$VERSION"
+        command: bash -lc "make build fpm_debian VERISON=$VERSION RELEASEVER=$RELEASEVER"
         volumes: 
-            - .:/data
+            - ${PWD-.}:/data
         working_dir: /data
-
+        environment:
+            - VERSION=$VERSION
+            - RELEASEVER=$RELEASEVER
     xenial:
         image: charlesportwoodii/xenial:build
-        container_name: xenial_x64
-        command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_debian VERSION=$VERSION"
+        command: bash -lc "make build fpm_debian VERISON=$VERSION RELEASEVER=$RELEASEVER"
         volumes: 
-            - .:/data
+            - ${PWD-.}:/data
         working_dir: /data
-
+        environment:
+            - VERSION=$VERSION
+            - RELEASEVER=$RELEASEVER
     centos7:
         image: charlesportwoodii/centos7:build
-        container_name: centos7_x86_64
-        command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_rpm VERSION=$VERSION"
+        command: bash -lc "make build fpm_rpm VERISON=$VERSION RELEASEVER=$RELEASEVER"
         volumes: 
-            - .:/data
+            - ${PWD-.}:/data
         working_dir: /data
-    
+        environment:
+            - VERSION=$VERSION
+            - RELEASEVER=$RELEASEVER
     rhel7:
         image: charlesportwoodii/rhel7:build
-        container_name: rhel7_x86_64
-        command: bash -lc "source .vs && make build VERISON=$VERSION RELEASEVER=$RELEASEVER && make fpm_rpm VERSION=$VERSION"
+        command: bash -lc "make build fpm_rpm VERISON=$VERSION RELEASEVER=$RELEASEVER"
         volumes: 
-            - .:/data
+            - ${PWD-.}:/data
         working_dir: /data
+        environment:
+            - VERSION=$VERSION
+            - RELEASEVER=$RELEASEVER
+    alpine3.6:
+        image: charlesportwoodii/alpine3.6:build
+        command: bash -lc "make build fpm_alpine VERISON=$VERSION RELEASEVER=$RELEASEVER"
+        volumes: 
+            - ${PWD-.}:/data
+        working_dir: /data
+        environment:
+            - VERSION=$VERSION
+            - RELEASEVER=$RELEASEVER

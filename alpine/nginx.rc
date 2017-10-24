@@ -1,0 +1,32 @@
+#!/sbin/openrc-run
+
+description="The NGINX HTTP and reverse proxy server
+name=nginx
+command="/usr/bin/nginx"
+pid=/var/run/nginx.pid
+
+depend() {
+    need net
+    need localmount
+    use dns logger
+}
+
+start_pre() {
+    $command -t
+}
+
+start() {
+    $command
+}
+
+reload() {
+    /bin/kill -s HUP $pid
+}
+
+stop() {
+    /bin/kill -s QUIT $pid
+}
+
+checkconfig() {
+    start_pre
+}
