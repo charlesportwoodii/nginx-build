@@ -7,6 +7,7 @@ env:
   - BUILD_IMAGE=centos7
   - BUILD_IMAGE=rhel7
   - BUILD_IMAGE=alpine3.6
+  - BUILD_IMAGE=alpine3.7
 
 language: generic
 
@@ -18,7 +19,7 @@ before_install:
   - curl -L "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - mkdir -p build/deb/trusty build/deb/xenial build/rpm/CentOS/7/x86_64 build/rpm/RHEL/7/x86_64 build/alpine/v3.6/x86_64
+  - mkdir -p build/deb/trusty build/deb/xenial build/rpm/CentOS/7/x86_64 build/rpm/RHEL/7/x86_64 build/alpine/v3.6/x86_64 build/alpine/v3.7/x86_64
 
 script:
   - if [ -n "$TRAVIS_TAG" ]; then export VERSION=$( cut -d '-' -f 1 <<< "$TRAVIS_TAG" ) export RELEASEVER=$( cut -d '-' -f 2 <<< "$TRAVIS_TAG" ); echo "Setting versions via TravisCI Tag"; fi
@@ -27,6 +28,7 @@ script:
   - if [ "$BUILD_IMAGE" == "centos7" ]; then mv *.rpm build/rpm/CentOS/7/x86_64; fi
   - if [ "$BUILD_IMAGE" == "rhel7" ]; then mv *.rpm build/rpm/RHEL/7/x86_64; fi
   - if [ "$BUILD_IMAGE" == "alpine3.6" ]; then mv *.apk build/alpine/v3.6/x86_64; fi
+  - if [ "$BUILD_IMAGE" == "alpine3.7" ]; then mv *.apk build/alpine/v3.7/x86_64; fi
 
 deploy:
   provider: s3
