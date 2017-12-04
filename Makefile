@@ -1,4 +1,4 @@
-SHELL := /bin/bash
+SHELL := /bin/sh
 
 # Dependency Versions
 PCREVERSION?=8.41
@@ -17,7 +17,7 @@ MODULE_SETMISC_VERSION="v0.31"
 
 # Bash data
 SCRIPTPATH=$(shell pwd -P)
-CORES=$(shell grep -c ^processor /proc/cpuinfo)
+CORES?=$(shell grep -c ^processor /proc/cpuinfo)
 RELEASE=$(shell lsb_release --codename | cut -f2)
 ARCH=$(shell arch)
 IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)

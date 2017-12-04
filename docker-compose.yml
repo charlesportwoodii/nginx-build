@@ -49,7 +49,7 @@ services:
             - RELEASEVER=$RELEASEVER
     alpine3.7:
         image: charlesportwoodii/alpine:3.7-build
-        command: bash -lc "make build fpm_alpine VERISON=$VERSION RELEASEVER=$RELEASEVER"
+        command: sh -lc "apk del apr-dev apr-util-dev apache2-dev bash-completion libtool bash; CORES=1 VERISON=$VERSION RELEASEVER=$RELEASEVER make clean base openssl pcre nginx fpm_alpine"
         volumes: 
             - ${PWD-.}:/data
         working_dir: /data

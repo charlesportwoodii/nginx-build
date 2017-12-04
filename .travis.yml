@@ -7,7 +7,7 @@ env:
   - BUILD_IMAGE=centos7
   - BUILD_IMAGE=rhel7
   - BUILD_IMAGE=alpine3.6
-  #- BUILD_IMAGE=alpine3.7
+  - BUILD_IMAGE=alpine3.7
 
 language: generic
 
