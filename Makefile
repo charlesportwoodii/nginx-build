@@ -248,7 +248,6 @@ fpm_debian: pre_package
 		--depends "luajit > 0" \
 		--depends "libluajit-5.1-common > 0" \
 		--depends "libluajit-5.1-2 > 0" \
-		--depends "libbrotli > 0" \
 		--depends "luajit-2.0 > 0" \
 		--depends "geoip-database > 0" \
 		--deb-systemd-restart-after-upgrade \
@@ -273,7 +272,6 @@ fpm_rpm: pre_package
 		--description "$(RELEASENAME), $(VERSION)" \
 		--vendor "Charles R. Portwood II" \
 		--depends "luajit > 0" \
-		--depends "libbrotli > 0" \
 		--depends "luajit-2.0 > 0" \
 		--depends "GeoIP > 0" \
 		--rpm-digest sha384 \
@@ -298,7 +296,6 @@ fpm_alpine: pre_package
 		--vendor "Charles R. Portwood II" \
 		--depends "luajit" \
 		--depends "luajit-dev" \
-		--depends "libbrotli" \
 		--depends "luajit-2.0" \
 		--depends "geoip" \
 		--depends "bash" \
