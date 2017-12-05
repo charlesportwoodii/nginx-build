@@ -1,4 +1,4 @@
-SHELL := /bin/sh
+SHELL := /bin/bash
 
 # Dependency Versions
 PCREVERSION?=8.41
