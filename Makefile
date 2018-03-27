@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 # Dependency Versions
-PCREVERSION?=8.41
+PCREVERSION?=8.42
 OPENSSLVERSION?=1.0.2o
 RELEASEVER?=1
 
