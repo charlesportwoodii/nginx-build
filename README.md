@@ -6,7 +6,7 @@ This package helps you quickly and easily build Nginx and Nginx Mainline on your
 
 
 ## Building & Packaging
-> Tested on Ubuntu 14.04, Ubuntu 16.04, CentOS7
+> Tested on Ubuntu 14.04, Ubuntu 16.04, Ubuntu 18.04, CentOS7, Alpine 3.6, Alpine 3,.7
 
 The preferred way of building PHP is to use build and package them within Docker, and then to install PHP from the packages it provides. This allows you to build PHP in an environment isolated from your own, and allows you to install PHP through your package manager, rather than through source. This approach requires both `Docker` and `docker-compose` to be installed. (see https://docs.docker.com/).
 
@@ -20,7 +20,7 @@ The preferred way of building PHP is to use build and package them within Docker
 
 3. Build PHP-FPM by running `docker-compose`, and specifying the platform you want to build for
 	```
-	docker-compose run <truty|xenial|centos7|rhel7>
+	docker-compose run <truty|xenial|bionic|centos7|rhel7|alpine3.6|alpine3.7>
 	```
 
 > Note all packages are build for x86_64. x86, armv6l, and armv7l images are not supported.
