@@ -9,7 +9,7 @@ RELEASEVER?=1
 MODULE_LUA_VERSION="v0.10.13"
 MODULE_DEVELKIT_VERSION="v0.3.0"
 MODULE_REDIS2_VERSION="v0.15"
-MODULE_BROTLI_VERSION="master"
+MODULE_BROTLI_VERSION="v0.1.2"
 MODULE_HEADERSMORE_VERSION="v0.33"
 MODULE_HTTPSUBS_VERSION="master"
 MODULE_LENGTHHIDING_VERSION="1.1.1"
@@ -118,7 +118,7 @@ nginx:
 
 	# Google Brotli
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/google/ngx_brotli -b $(MODULE_BROTLI_VERSION) --recursive
+	git clone https://github.com/eustas/ngx_brotli -b $(MODULE_BROTLI_VERSION) --recursive
 
 	# OpenResty Headers More
 	cd /tmp/nginx-$(VERSION)/modules && \
