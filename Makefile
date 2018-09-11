@@ -1,8 +1,8 @@
-SHELL := /bin/bash
+SHELL := /bin/sh
 
 # Dependency Versions
 PCREVERSION?=8.42
-OPENSSLVERSION?=1.0.2p
+OPENSSLVERSION?=1.1.1
 RELEASEVER?=1
 
 # Module versions
@@ -24,9 +24,9 @@ IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
 IS_ALPINE=$(shell if [ -f /etc/alpine-release ]; then echo 1; else echo 0; fi)
 
 ifeq ($(IS_ARM), 1)
-EXTRA_ARGS="--with-openssl-opt='enable-tlsext no-ssl2 no-ssl3'"
+EXTRA_ARGS="--with-openssl-opt='no-ssl3 enable-tls1_3'"
 else
-EXTRA_ARGS='--with-openssl-opt=enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'
+EXTRA_ARGS='--with-openssl-opt=enable-ec_nistp_64_gcc_128 no-ssl3 enable-tls1_3'
 endif
 
 description=$(shell cat debian/description-pak)
@@ -84,14 +84,10 @@ openssl:
 	
 	if [[ "$(ARCH)" == "arm"* ]]; then \
 		cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION) && \
-		./config --prefix=$(OPENSSL_PATH) no-shared enable-tlsext no-ssl2 no-ssl3; \
+		./config --prefix=$(OPENSSL_PATH) no-shared no-ssl3; \
 	else \
 		cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION) && \
-		wget https://raw.githubusercontent.com/cloudflare/sslconfig/master/patches/openssl__chacha20_poly1305_draft_and_rfc_ossl102g.patch && \
-		patch -p1 < openssl__chacha20_poly1305_draft_and_rfc_ossl102g.patch 2>/dev/null; true && \
-		wget https://gist.githubusercontent.com/charlesportwoodii/9e95c6a4ecde31ea23c17f6823bdb320/raw/a02fac917fc30f4767fb60a9563bad69dc1c054d/chacha.patch && \
-		patch < chacha.patch 2>/dev/null; true && \
-		./config --prefix=$(OPENSSL_PATH) no-shared enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3; \
+		./config --prefix=$(OPENSSL_PATH) no-shared enable-ec_nistp_64_gcc_128  no-ssl3; \
 	fi 
 
 	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
