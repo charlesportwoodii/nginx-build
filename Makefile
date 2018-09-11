@@ -84,10 +84,10 @@ openssl:
 	
 	if [[ "$(ARCH)" == "arm"* ]]; then \
 		cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION) && \
-		./config --prefix=$(OPENSSL_PATH) no-shared no-ssl3; \
+		./config --prefix=$(OPENSSL_PATH) no-shared no-ssl3 enable-tls1_3; \
 	else \
 		cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION) && \
-		./config --prefix=$(OPENSSL_PATH) no-shared enable-ec_nistp_64_gcc_128  no-ssl3; \
+		./config --prefix=$(OPENSSL_PATH) no-shared enable-ec_nistp_64_gcc_128 no-ssl3 enable-tls1_3; \
 	fi 
 
 	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
