@@ -23,12 +23,6 @@ ARCH=$(shell arch)
 IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
 IS_ALPINE=$(shell if [ -f /etc/alpine-release ]; then echo 1; else echo 0; fi)
 
-ifeq ($(IS_ARM), 1)
-EXTRA_ARGS="--with-openssl-opt='no-ssl3 enable-tls1_3'"
-else
-EXTRA_ARGS='--with-openssl-opt=enable-ec_nistp_64_gcc_128 no-ssl3 enable-tls1_3'
-endif
-
 description=$(shell cat debian/description-pak)
 major=$(shell echo $(VERSION) | cut -d. -f1)
 minor=$(shell echo $(VERSION) | cut -d. -f2)
@@ -81,17 +75,6 @@ openssl:
 	cd /tmp/nginx-$(VERSION) && \
 	wget https://www.openssl.org/source/openssl-$(OPENSSLVERSION).tar.gz && \
 	tar -xf openssl-$(OPENSSLVERSION).tar.gz
-	
-	if [[ "$(ARCH)" == "arm"* ]]; then \
-		cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION) && \
-		./config --prefix=$(OPENSSL_PATH) no-shared no-ssl3 enable-tls1_3; \
-	else \
-		cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION) && \
-		./config --prefix=$(OPENSSL_PATH) no-shared enable-ec_nistp_64_gcc_128 no-ssl3 enable-tls1_3; \
-	fi 
-
-	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
-	make depend
 
 nginx:
 	# Download Nginx Modules
@@ -137,6 +120,7 @@ nginx:
  	export LUAJIT_INC=/usr/local/include/luajit-2.0 && \
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	./configure \
+		--with-cpu-opt=generic \
 		--with-http_geoip_module \
 		--with-http_realip_module \
 		--with-http_ssl_module \
@@ -164,13 +148,13 @@ nginx:
 		--add-dynamic-module=modules/ngx_brotli \
 		--add-dynamic-module=modules/set-misc-nginx-module \
 		--add-module=modules/lua-nginx-module \
-		--with-pcre=pcre-"$(PCREVERSION)" \
-		--with-openssl=openssl-"$(OPENSSLVERSION)" \
-		$(EXTRA_ARGS)
+		--with-pcre=./pcre-"$(PCREVERSION)" \
+		--with-openssl=./openssl-"$(OPENSSLVERSION)" \
+		--with-openssl-opt=enable-tls1_3
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
-	make -j$(CORES)
+	make -j1
 
 pre_package:
 	# Clean the old build directory
