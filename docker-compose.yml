@@ -47,7 +47,7 @@ services:
             - RELEASEVER=$RELEASEVER
     alpine3.6:
         image: charlesportwoodii/alpine:3.6-build
-        command: bash -lc "apk add --no-cache linux-headers; VERISON=$VERSION RELEASEVER=$RELEASEVER make clean base openssl pcre nginx fpm_alpine"
+        command: bash -lc "VERISON=$VERSION RELEASEVER=$RELEASEVER make clean base openssl pcre nginx fpm_alpine"
         volumes: 
             - ${PWD-.}:/data
         working_dir: /data
@@ -56,7 +56,7 @@ services:
             - RELEASEVER=$RELEASEVER
     alpine3.7:
         image: charlesportwoodii/alpine:3.7-build
-        command: bash -lc "apk add --no-cache linux-headers; VERISON=$VERSION RELEASEVER=$RELEASEVER make clean base openssl pcre nginx fpm_alpine"
+        command: bash -lc "VERISON=$VERSION RELEASEVER=$RELEASEVER make clean base openssl pcre nginx fpm_alpine"
         volumes: 
             - ${PWD-.}:/data
         working_dir: /data
