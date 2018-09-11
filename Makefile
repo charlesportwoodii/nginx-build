@@ -150,7 +150,7 @@ nginx:
 		--add-module=modules/lua-nginx-module \
 		--with-pcre=./pcre-"$(PCREVERSION)" \
 		--with-openssl=./openssl-"$(OPENSSLVERSION)" \
-		--with-openssl-opt=enable-tls1_3
+		--with-openssl-opt='enable-tls1_3'
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
