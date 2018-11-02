@@ -55,7 +55,7 @@ base:
 	cd /tmp && \
 	wget -qO- http://nginx.org/download/nginx-$(VERSION).tar.gz | tar -xz
 
-pcre: 
+pcre:
 	mkdir -p /tmp/nginx-$(VERSION)
 
 	rm -rf /tmp/nginx-$(VERSION)/pcre-$(PCREVERSION).tar.gz
@@ -106,7 +106,7 @@ nginx:
 	# HTTP Subs module
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module -b $(MODULE_HTTPSUBS_VERSION)
-	
+
 	# Length Hiding Modules
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/nulab/nginx-length-hiding-filter-module -b $(MODULE_LENGTHHIDING_VERSION)
@@ -165,9 +165,9 @@ pre_package:
 	make install DESTDIR=/tmp/nginx-$(VERSION)-install
 
 	rm -rf /tmp/nginx-$(VERSION)-install/etc/nginx/conf/nginx.conf
-	
+
 	# Create the working build directory
-	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/client_body_temp 
+	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/client_body_temp
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/conf/conf.d
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/fastcgi_temp
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/proxy_temp
@@ -199,12 +199,12 @@ pre_package:
 	mkdir -p /tmp/nginx-$(VERSION)-install/usr/lib/nginx
 	mv /tmp/nginx-$(VERSION)-install/etc/nginx/modules /tmp/nginx-$(VERSION)-install/usr/lib/nginx/
 	# Copy systemd file
-	
+
 
 ifeq ($(IS_ALPINE), 1)
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/init.d
 	cp $(SCRIPTPATH)/alpine/nginx.rc /tmp/nginx-$(VERSION)-install/etc/init.d
-else 
+else
 	mkdir -p /tmp/nginx-$(VERSION)-install/lib/systemd/system
 	cp $(SCRIPTPATH)/nginx.service /tmp/nginx-$(VERSION)-install/lib/systemd/system/nginx.service
 endif
@@ -237,7 +237,7 @@ fpm_debian: pre_package
 		--no-deb-auto-config-files \
 		--before-install $(SCRIPTPATH)/debian/preinstall-pak \
 		--after-install $(SCRIPTPATH)/debian/postinstall-pak \
-		--before-remove $(SCRIPTPATH)/debian/preremove-pak 
+		--before-remove $(SCRIPTPATH)/debian/preremove-pak
 
 fpm_rpm: pre_package
 	fpm -s dir \
@@ -260,10 +260,10 @@ fpm_rpm: pre_package
 		--force \
 		--before-install $(SCRIPTPATH)/rpm/preinstall \
 		--after-install $(SCRIPTPATH)/rpm/postinstall \
-		--before-remove $(SCRIPTPATH)/rpm/preremove 
+		--before-remove $(SCRIPTPATH)/rpm/preremove
 
 fpm_alpine: pre_package
-	/fpm/bin/fpm -s dir \
+	fpm -s dir \
 		-t apk \
 		-n $(RELEASENAME) \
 		-v $(VERSION)-$(RELEASEVER)~$(shell uname -m) \
