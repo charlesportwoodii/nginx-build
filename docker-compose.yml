@@ -2,10 +2,10 @@
 
 version: '3.3'
 services:
-    trusty: 
+    trusty:
         image: charlesportwoodii/ubuntu:14.04-build
         command: bash -lc "make build fpm_debian VERISON=$VERSION RELEASEVER=$RELEASEVER"
-        volumes: 
+        volumes:
             - ${PWD-.}:/data
         working_dir: /data
         environment:
@@ -14,7 +14,7 @@ services:
     xenial:
         image: charlesportwoodii/ubuntu:16.04-build
         command: bash -lc "make build fpm_debian VERISON=$VERSION RELEASEVER=$RELEASEVER"
-        volumes: 
+        volumes:
             - ${PWD-.}:/data
         working_dir: /data
         environment:
@@ -23,7 +23,7 @@ services:
     bionic:
         image: charlesportwoodii/ubuntu:18.04-build
         command: bash -lc "make build fpm_debian VERISON=$VERSION RELEASEVER=$RELEASEVER"
-        volumes: 
+        volumes:
             - ${PWD-.}:/data
         working_dir: /data
         environment:
@@ -32,7 +32,7 @@ services:
     centos7:
         image: charlesportwoodii/centos:7-build
         command: bash -lc "make build fpm_rpm VERISON=$VERSION RELEASEVER=$RELEASEVER"
-        volumes: 
+        volumes:
             - ${PWD-.}:/data
         working_dir: /data
         environment:
@@ -41,7 +41,7 @@ services:
     rhel7:
         image: charlesportwoodii/rhel:7-build
         command: bash -lc "make build fpm_rpm VERISON=$VERSION RELEASEVER=$RELEASEVER"
-        volumes: 
+        volumes:
             - ${PWD-.}:/data
         working_dir: /data
         environment:
@@ -50,7 +50,7 @@ services:
     alpine3.6:
         image: charlesportwoodii/alpine:3.6-build
         command: bash -lc "make build fpm_alpine VERISON=$VERSION RELEASEVER=$RELEASEVER"
-        volumes: 
+        volumes:
             - ${PWD-.}:/data
         working_dir: /data
         environment:
@@ -59,7 +59,16 @@ services:
     alpine3.7:
         image: charlesportwoodii/alpine:3.7-build
         command: sh -lc "apk del apr-dev apr-util-dev apache2-dev bash-completion bash libtool; sed -i '1c\SHELL := /bin/sh' Makefile; CORES=1 VERISON=$VERSION RELEASEVER=$RELEASEVER make clean base openssl pcre nginx fpm_alpine"
-        volumes: 
+        volumes:
+            - ${PWD-.}:/data
+        working_dir: /data
+        environment:
+            - VERSION=$VERSION
+            - RELEASEVER=$RELEASEVER
+    alpine3.8:
+        image: charlesportwoodii/alpine:3.8-build
+        command: sh -lc "apk del apr-dev apr-util-dev apache2-dev bash-completion bash libtool; sed -i '1c\SHELL := /bin/sh' Makefile; CORES=1 VERISON=$VERSION RELEASEVER=$RELEASEVER make clean base openssl pcre nginx fpm_alpine"
+        volumes:
             - ${PWD-.}:/data
         working_dir: /data
         environment:
