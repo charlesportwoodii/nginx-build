@@ -1,8 +1,8 @@
-SHELL := /bin/bash
+SHELL := /bin/sh
 
 # Dependency Versions
 PCREVERSION?=8.42
-OPENSSLVERSION?=1.0.2o
+OPENSSLVERSION?=1.1.1
 RELEASEVER?=1
 
 # Module versions
@@ -22,12 +22,6 @@ RELEASE=$(shell lsb_release --codename | cut -f2)
 ARCH=$(shell arch)
 IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
 IS_ALPINE=$(shell if [ -f /etc/alpine-release ]; then echo 1; else echo 0; fi)
-
-ifeq ($(IS_ARM), 1)
-EXTRA_ARGS="--with-openssl-opt='enable-tlsext no-ssl2 no-ssl3'"
-else
-EXTRA_ARGS='--with-openssl-opt=enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3'
-endif
 
 description=$(shell cat debian/description-pak)
 major=$(shell echo $(VERSION) | cut -d. -f1)
@@ -69,7 +63,7 @@ pcre:
 
 	# Download PCRE
 	cd /tmp/nginx-$(VERSION) && \
-	wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-$(PCREVERSION).tar.gz && \
+	wget https://ftp.pcre.org/pub/pcre/pcre-$(PCREVERSION).tar.gz && \
 	tar -xzf /tmp/nginx-$(VERSION)/pcre-$(PCREVERSION).tar.gz
 
 openssl:
@@ -81,21 +75,6 @@ openssl:
 	cd /tmp/nginx-$(VERSION) && \
 	wget https://www.openssl.org/source/openssl-$(OPENSSLVERSION).tar.gz && \
 	tar -xf openssl-$(OPENSSLVERSION).tar.gz
-	
-	if [[ "$(ARCH)" == "arm"* ]]; then \
-		cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION) && \
-		./config --prefix=$(OPENSSL_PATH) no-shared enable-tlsext no-ssl2 no-ssl3; \
-	else \
-		cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION) && \
-		wget https://raw.githubusercontent.com/cloudflare/sslconfig/master/patches/openssl__chacha20_poly1305_draft_and_rfc_ossl102g.patch && \
-		patch -p1 < openssl__chacha20_poly1305_draft_and_rfc_ossl102g.patch 2>/dev/null; true && \
-		wget https://gist.githubusercontent.com/charlesportwoodii/9e95c6a4ecde31ea23c17f6823bdb320/raw/a02fac917fc30f4767fb60a9563bad69dc1c054d/chacha.patch && \
-		patch < chacha.patch 2>/dev/null; true && \
-		./config --prefix=$(OPENSSL_PATH) no-shared enable-ec_nistp_64_gcc_128 enable-tlsext no-ssl2 no-ssl3; \
-	fi 
-
-	cd /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)  && \
-	make depend
 
 nginx:
 	# Download Nginx Modules
@@ -141,6 +120,7 @@ nginx:
  	export LUAJIT_INC=/usr/local/include/luajit-2.0 && \
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	./configure \
+		--with-cpu-opt=generic \
 		--with-http_geoip_module \
 		--with-http_realip_module \
 		--with-http_ssl_module \
@@ -168,13 +148,13 @@ nginx:
 		--add-dynamic-module=modules/ngx_brotli \
 		--add-dynamic-module=modules/set-misc-nginx-module \
 		--add-module=modules/lua-nginx-module \
-		--with-pcre=pcre-"$(PCREVERSION)" \
-		--with-openssl=openssl-"$(OPENSSLVERSION)" \
-		$(EXTRA_ARGS)
+		--with-pcre=./pcre-"$(PCREVERSION)" \
+		--with-openssl=./openssl-"$(OPENSSLVERSION)" \
+		--with-openssl-opt='enable-tls1_3'
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
-	make -j$(CORES)
+	make -j1
 
 pre_package:
 	# Clean the old build directory

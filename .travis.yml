@@ -35,7 +35,7 @@ script:
 
 deploy:
   provider: s3
-  access_key_id: AKIAJ5QCEUQ2WVNY7GDA
+  access_key_id: AKIAINRCDYGMMTSHTIHA
   bucket: travis-packages.erianna.com
   detect_encoding: true
   skip_cleanup: true
@@ -47,4 +47,4 @@ deploy:
     all_branches: false
     repo: charlesportwoodii/nginx-build
   secret_access_key:
-    secure: WLzk2K0fP5pSX3c+/AWoOnXxIQ2WVCF3JFYHgP/DN1sAAzw+4uJLAhG/JAFdazXexP0ArWCTqzIgtYFPDqOrdr16P9qtR+fpG8swIOdZeTRP5RTpLR77FUJPkCjsq19mT3bMDu1oEI/JxZKObgtE7MyEfMzCWcZ8kuofrkaf5KY=
+    secure: aF+F2o3c/LDHyJGcpsjZNg5CWb1sjSyPaO6gZMHtedxgJqPLeBr9PeucZwGLPeD2dbVKn9aJ0Js6icF3uwUR7NPB7LImNoLbcxRf2wq5GOfvL81JBpe0/Vo7dwQxuecm/2QBSB0ZBs80DaFeVz/ATpYuCs9US4ui5/l5HiM1Nwtp/PyMtBxCwhfSEUJjcWjXTiqUmgH9fcVpCkLcudUKKEi4pggrEKlNLwi8D+bduYfGs2/dxlFDqFpERixtk1u8bITZCud/oUzbYsGj7k9jdZeMgUKGvfCGz2homTthAVZ+3YCfR0CKE+/vS0qOSKtE4l43kjirbpXuJmRHJ0QrOEeMdoELjfEmGBK3997S25v6wgYsfmNl6uvNw5L5IxrqEWWop9zLSQst2DWIxRY20cm99jPEmFXqUI2rTiEVUfuLtF9yYJtXRwCpKncQSLuXB7VEbZXmy/j0wRFbfkcH9vV3ZnS1ppXM5rks3D2xc3K7T6D9sNGxWF/e+o/oECll7J2e94GwcyqBSBZhiLTG68YrwMDp7mtEf46Qo8bYpBgPQkW+iUxUbjGVIlSy3+GDF4yTabg5uxDqDZLkDS4aNr60CtPR8iiagO5j7e42TeC0wQk+wu3n8JSKMsIkELQwIYpdisTt1YA/6x7WBdYPOz5W253wc9HbSFJgzC0hLFM=
