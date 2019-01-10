@@ -82,43 +82,42 @@ nginx:
 
 	# Nginx Lua Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/openresty/lua-nginx-module -b $(MODULE_LUA_VERSION) && \
+	git clone https://github.com/openresty/lua-nginx-module -b $(MODULE_LUA_VERSION) --depth=5 && \
 	cd lua-nginx-module
 
 	# Nginx Devel Kit
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/simpl/ngx_devel_kit && \
-	cd ngx_devel_kit && \
-	git checkout $(MODULE_DEVELKIT_VERSION)
+	git clone https://github.com/simpl/ngx_devel_kit -b $(MODULE_DEVELKIT_VERSION) --depth=5
 
 	# Redis2
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/openresty/redis2-nginx-module -b $(MODULE_REDIS2_VERSION)
+	git clone https://github.com/openresty/redis2-nginx-module -b $(MODULE_REDIS2_VERSION) --depth=5
 
 	# Google Brotli
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/eustas/ngx_brotli -b $(MODULE_BROTLI_VERSION) --recursive
+	git clone https://github.com/eustas/ngx_brotli -b $(MODULE_BROTLI_VERSION) --depth=5 --recursive 
 
 	# OpenResty Headers More
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone "https://github.com/openresty/headers-more-nginx-module" -b $(MODULE_HEADERSMORE_VERSION)
+	git clone "https://github.com/openresty/headers-more-nginx-module" -b $(MODULE_HEADERSMORE_VERSION) --depth=5
 
 	# HTTP Subs module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module -b $(MODULE_HTTPSUBS_VERSION)
+	git clone https://github.com/yaoweibin/ngx_http_substitutions_filter_module -b $(MODULE_HTTPSUBS_VERSION) --depth=5
 
 	# Length Hiding Modules
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/nulab/nginx-length-hiding-filter-module -b $(MODULE_LENGTHHIDING_VERSION)
+	git clone https://github.com/nulab/nginx-length-hiding-filter-module -b $(MODULE_LENGTHHIDING_VERSION) --depth=5
 
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/openresty/set-misc-nginx-module -b $(MODULE_SETMISC_VERSION)
+	git clone https://github.com/openresty/set-misc-nginx-module -b $(MODULE_SETMISC_VERSION) --depth=5
 
 	# Configure
 	cd /tmp/nginx-$(VERSION) && \
 	export LUAJIT_LIB=/usr/local/lib && \
  	export LUAJIT_INC=/usr/local/include/luajit-2.0 && \
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
+	export CLFAGS=""  && \
 	./configure \
 		--with-cpu-opt=generic \
 		--with-http_geoip_module \
@@ -148,9 +147,11 @@ nginx:
 		--add-dynamic-module=modules/ngx_brotli \
 		--add-dynamic-module=modules/set-misc-nginx-module \
 		--add-module=modules/lua-nginx-module \
-		--with-pcre=./pcre-"$(PCREVERSION)" \
-		--with-openssl=./openssl-"$(OPENSSLVERSION)" \
-		--with-openssl-opt='enable-tls1_3'
+		--with-threads \
+		--with-stream \
+		--with-pcre=./pcre-$(PCREVERSION) \
+		--with-openssl=./openssl-$(OPENSSLVERSION) \
+		--with-openssl-opt='enable-tls1_3 -fstack-protector-strong -fPIE'
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
