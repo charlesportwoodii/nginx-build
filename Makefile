@@ -151,7 +151,7 @@ nginx:
 		--with-stream \
 		--with-pcre=./pcre-$(PCREVERSION) \
 		--with-openssl=./openssl-$(OPENSSLVERSION) \
-		--with-openssl-opt='enable-tls1_3 -fstack-protector-strong -fPIE'
+		--with-openssl-opt='enable-tls1_3 -fPIE'
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
