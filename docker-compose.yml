@@ -72,3 +72,12 @@ services:
         environment:
             - VERSION=$VERSION
             - RELEASEVER=$RELEASEVER
+    alpine3.9:
+        image: charlesportwoodii/alpine:3.9-build
+        command: bash -lc "VERISON=$VERSION RELEASEVER=$RELEASEVER make clean base openssl pcre nginx fpm_alpine"
+        volumes:
+            - ${PWD-.}:/data
+        working_dir: /data
+        environment:
+            - VERSION=$VERSION
+            - RELEASEVER=$RELEASEVER
