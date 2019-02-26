@@ -1,12 +1,12 @@
 SHELL := /bin/sh
 
 # Dependency Versions
-PCREVERSION?=8.42
-OPENSSLVERSION?=1.1.1a
+PCREVERSION?=8.43
+OPENSSLVERSION?=1.1.1b
 RELEASEVER?=1
 
 # Module versions
-MODULE_LUA_VERSION="v0.10.13"
+MODULE_LUA_VERSION="v0.10.14"
 MODULE_DEVELKIT_VERSION="v0.3.0"
 MODULE_REDIS2_VERSION="v0.15"
 MODULE_BROTLI_VERSION="v0.1.2"
@@ -231,6 +231,7 @@ fpm_debian: pre_package
 		--depends "libluajit-5.1-2 > 0" \
 		--depends "luajit-2.0 > 0" \
 		--depends "geoip-database > 0" \
+		--depends "libbrotli > 0" \
 		--deb-systemd-restart-after-upgrade \
 		--deb-compression gz \
 		--template-scripts \
@@ -255,6 +256,7 @@ fpm_rpm: pre_package
 		--depends "luajit > 0" \
 		--depends "luajit-2.0 > 0" \
 		--depends "GeoIP > 0" \
+		--depends "libbrotli > 0" \
 		--rpm-digest sha384 \
 		--rpm-compression gzip \
 		--template-scripts \
@@ -282,6 +284,7 @@ fpm_alpine: pre_package
 		--depends "bash" \
 		--depends "openrc" \
 		--depends "openssl" \
+		--depends "libbrotli" \
 		--force \
 		-a $(shell uname -m) \
 		--before-install $(SCRIPTPATH)/alpine/pre-install \
