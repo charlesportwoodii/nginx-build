@@ -14,6 +14,7 @@ MODULE_HEADERSMORE_VERSION="v0.33"
 MODULE_HTTPSUBS_VERSION="master"
 MODULE_LENGTHHIDING_VERSION="1.1.1"
 MODULE_SETMISC_VERSION="v0.32"
+MODULE_RTMP_VERSION="a5ac72c274efb09e8f1fda4d5d92b70cec66c359"
 
 # Bash data
 SCRIPTPATH=$(shell pwd -P)
@@ -112,6 +113,9 @@ nginx:
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/openresty/set-misc-nginx-module -b $(MODULE_SETMISC_VERSION) --depth=5
 
+	cd /tmp/nginx-$(VERISON)/modules && \
+	git clone https://github.com/sergey-dryabzhinsky/nginx-rtmp-module -b $(MODULE_RTMP_VERSION) --depth=5
+
 	# Configure
 	cd /tmp/nginx-$(VERSION) && \
 	export LUAJIT_LIB=/usr/local/lib && \
@@ -119,19 +123,25 @@ nginx:
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	export CLFAGS=""  && \
 	./configure \
+		--with-compat \
 		--with-cpu-opt=generic \
 		--with-http_geoip_module \
 		--with-http_realip_module \
 		--with-http_ssl_module \
 		--with-http_gunzip_module \
 		--with-http_addition_module \
+		--with-http_v2_module \
+		--with-http_sub_module \
+		--with-http_mp4_module \
+		--with-stream \
+    	--with-stream_ssl_module \
+		--with-stream_realip_module \
+		--with-stream_geoip_module \
+		--with-stream_ssl_preread_module \
 		--with-http_auth_request_module \
 		--with-http_gzip_static_module \
 		--with-http_stub_status_module \
-		--with-http_v2_module \
-		--with-http_sub_module \
 		--with-ipv6 \
-		--with-http_mp4_module \
 		--with-mail \
 		--with-mail_ssl_module \
 		--prefix=/etc/nginx \
@@ -146,9 +156,9 @@ nginx:
 		--add-dynamic-module=modules/ngx_http_substitutions_filter_module \
 		--add-dynamic-module=modules/ngx_brotli \
 		--add-dynamic-module=modules/set-misc-nginx-module \
+		--add-dynamic-module=modules/nginx-rtmp-module \
 		--add-module=modules/lua-nginx-module \
 		--with-threads \
-		--with-stream \
 		--with-pcre=./pcre-$(PCREVERSION) \
 		--with-openssl=./openssl-$(OPENSSLVERSION) \
 		--with-openssl-opt='enable-tls1_3 -fPIE'
