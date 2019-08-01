@@ -30,7 +30,7 @@ script:
   - docker-compose run $BUILD_IMAGE
   - if [ "$BUILD_OS" == "Ubuntu" ]; then mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE; fi
   - if [ "$BUILD_OS" == "Alpine" ]; then mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64; fi
-  - if [ "$BUILD_OS" == "CentOS" ] || [ "$BUILD_OS" == "RHEL" ]; then mv *.rpm build/rpm/$OS/$BUILD_OS_VERSION/x86_64; fi
+  - if [ "$BUILD_OS" == "CentOS" ] || [ "$BUILD_OS" == "RHEL" ]; then mv *.rpm build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64; fi
 
 deploy:
   provider: s3
