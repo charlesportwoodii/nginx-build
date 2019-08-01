@@ -23,7 +23,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - if [ "$BUILD_OS" == "Ubuntu" ]; then mkdir -p build/deb/$BUILD_IMAGE; fi
   - if [ "$BUILD_OS" == "Alpine" ]; then mkdir -p build/alpine/v$BUILD_OS_VERSION/x86_64; fi
-  - if [ "$BUILD_OS" == "CentOS" ] || [ "$BUILD_OS" == "RHEL" ]; then mkdir -p build/rpm/$OS/$BUILD_OS_VERSION/x86_64; fi
+  - if [ "$BUILD_OS" == "CentOS" ] || [ "$BUILD_OS" == "RHEL" ]; then mkdir -p build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64; fi
 
 script:
   - if [ -n "$TRAVIS_TAG" ]; then export VERSION=$( cut -d '-' -f 1 <<< "$TRAVIS_TAG" ) export RELEASEVER=$( cut -d '-' -f 2 <<< "$TRAVIS_TAG" ); echo "Setting versions via TravisCI Tag"; fi
