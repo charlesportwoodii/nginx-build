@@ -2,15 +2,22 @@ sudo: required
 dist: trusty
 
 env:
-  - BUILD_IMAGE=bionic BUILD_OS=Ubuntu BUILD_OS_VERSION=18.04
-  - BUILD_IMAGE=xenial BUILD_OS=Ubuntu BUILD_OS_VERSION=16.04
-  - BUILD_IMAGE=trusty BUILD_OS=Ubuntu BUILD_OS_VERSION=14.04
-  - BUILD_IMAGE=centos7 BUILD_OS=CentOS BUILD_OS_VERSION=7
-  - BUILD_IMAGE=rhel7 BUILD_OS=RHEL BUILD_OS_VERSION=7
-  - BUILD_IMAGE=alpine3.7 BUILD_OS=Alpine BUILD_OS_VERSION=3.7
-  - BUILD_IMAGE=alpine3.8 BUILD_OS=Alpine BUILD_OS_VERSION=3.8
-  - BUILD_IMAGE=alpine3.9 BUILD_OS=Alpine BUILD_OS_VERSION=3.9
-  - BUILD_IMAGE=alpine3.10 BUILD_OS=Alpine BUILD_OS_VERSION=3.10
+  global:
+    - secure: "py8zJDZLFk39dyal2+0azvK9MEnOQ9qljHYsBWdnbjV4jbbsbXoVDo072IGfJju6UTVgrqXNTM5+r0rLKjW0N3afrVlwV3wkBHBWfm9+FkXSovz1eQ+txZ+UK8qbPKiFnCi9uFufTOtT2iP93RfDydD0sJfDP2Yd/gJ1JbgVqMeKvWaycZJrBUa6xMyKxVKSj/fgrqxH8uA9dzDocZ1AebMm+GQKFH8oT+6h2TfRUoki1AX5tfyjGLiM2uiosbBuNLdCsY7SuJsz+owcBqltExckvLTY5e2gAAsXWapkMCFQ1Xh0IXoqN5NM7lWko/k2ItmtaP4GP+opthWRjYgQd7LMzKnyabmOWeBftE6Ymtxir2rby8P8vK4mNo4BKJDdk4P83eyZjnw5mScOO44FC0UW9vUPIFzqUdexKfoRuYrNwrWZkiG2RXgoF5fGGcD/P8BY1t042d8LKP8Ard6l07PQVmYhlYnnIsOTob50CTi5hGBbc4eoo4zaUGgfUtXA89TFfw2tq2MZEuX6uNPTWsEmjKaVPIUmCTVTK9VGjcp3LpMq15Jy0flTRQW9aiPjbsiBkakB1BXweoE7cqe4FOgTqWodX4y0uPoDZYeisAK1vRN0/X9QIdQyEsQsUPxan1Rz6X8aGmZn3sqt8rj8bGHlFB40BjtZfeAzjfoTBnE="
+    - AWS_ACCESS_KEY_ID=XZQSNWFHKYPQDESUJSTT
+    - AWS_HOST=nyc3.digitaloceanspaces.com
+    - AWS_BUCKET=com-erianna-travis
+    - AWS_HOST_BUCKET="$AWS_BUCKET-$AWS_HOST"
+  jobs:
+    - BUILD_IMAGE=bionic BUILD_OS=Ubuntu BUILD_OS_VERSION=18.04
+    - BUILD_IMAGE=xenial BUILD_OS=Ubuntu BUILD_OS_VERSION=16.04
+    - BUILD_IMAGE=trusty BUILD_OS=Ubuntu BUILD_OS_VERSION=14.04
+    - BUILD_IMAGE=centos7 BUILD_OS=CentOS BUILD_OS_VERSION=7
+    - BUILD_IMAGE=rhel7 BUILD_OS=RHEL BUILD_OS_VERSION=7
+    - BUILD_IMAGE=alpine3.7 BUILD_OS=Alpine BUILD_OS_VERSION=3.7
+    - BUILD_IMAGE=alpine3.8 BUILD_OS=Alpine BUILD_OS_VERSION=3.8
+    - BUILD_IMAGE=alpine3.9 BUILD_OS=Alpine BUILD_OS_VERSION=3.9
+    - BUILD_IMAGE=alpine3.10 BUILD_OS=Alpine BUILD_OS_VERSION=3.10
 
 language: generic
 services:
@@ -34,16 +41,14 @@ script:
 
 deploy:
   provider: s3
-  access_key_id: AKIAINRCDYGMMTSHTIHA
-  bucket: travis-packages.erianna.com
-  detect_encoding: true
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: $AWS_SECRET_ACCESS_KEY
+  bucket: $AWS_BUCKET
+  local-dir: build
   skip_cleanup: true
-  acl: public_read
-  region: us-west-2
-  local_dir: build
+  detect_encoding: true
+  endpoint: https://$AWS_HOST
   on:
     tags: true
     all_branches: false
     repo: charlesportwoodii/nginx-build
-  secret_access_key:
-    secure: aF+F2o3c/LDHyJGcpsjZNg5CWb1sjSyPaO6gZMHtedxgJqPLeBr9PeucZwGLPeD2dbVKn9aJ0Js6icF3uwUR7NPB7LImNoLbcxRf2wq5GOfvL81JBpe0/Vo7dwQxuecm/2QBSB0ZBs80DaFeVz/ATpYuCs9US4ui5/l5HiM1Nwtp/PyMtBxCwhfSEUJjcWjXTiqUmgH9fcVpCkLcudUKKEi4pggrEKlNLwi8D+bduYfGs2/dxlFDqFpERixtk1u8bITZCud/oUzbYsGj7k9jdZeMgUKGvfCGz2homTthAVZ+3YCfR0CKE+/vS0qOSKtE4l43kjirbpXuJmRHJ0QrOEeMdoELjfEmGBK3997S25v6wgYsfmNl6uvNw5L5IxrqEWWop9zLSQst2DWIxRY20cm99jPEmFXqUI2rTiEVUfuLtF9yYJtXRwCpKncQSLuXB7VEbZXmy/j0wRFbfkcH9vV3ZnS1ppXM5rks3D2xc3K7T6D9sNGxWF/e+o/oECll7J2e94GwcyqBSBZhiLTG68YrwMDp7mtEf46Qo8bYpBgPQkW+iUxUbjGVIlSy3+GDF4yTabg5uxDqDZLkDS4aNr60CtPR8iiagO5j7e42TeC0wQk+wu3n8JSKMsIkELQwIYpdisTt1YA/6x7WBdYPOz5W253wc9HbSFJgzC0hLFM=
