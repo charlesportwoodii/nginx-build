@@ -9,6 +9,7 @@ env:
     - AWS_BUCKET=com-erianna-travis
     - AWS_HOST_BUCKET="$AWS_BUCKET-$AWS_HOST"
   jobs:
+    - BUILD_IMAGE=focal BUILD_OS=Ubuntu BUILD_OS_VERSION=20.04
     - BUILD_IMAGE=bionic BUILD_OS=Ubuntu BUILD_OS_VERSION=18.04
     - BUILD_IMAGE=xenial BUILD_OS=Ubuntu BUILD_OS_VERSION=16.04
     - BUILD_IMAGE=trusty BUILD_OS=Ubuntu BUILD_OS_VERSION=14.04
@@ -17,7 +18,7 @@ env:
     - BUILD_IMAGE=alpine3.7 BUILD_OS=Alpine BUILD_OS_VERSION=3.7
     - BUILD_IMAGE=alpine3.8 BUILD_OS=Alpine BUILD_OS_VERSION=3.8
     - BUILD_IMAGE=alpine3.9 BUILD_OS=Alpine BUILD_OS_VERSION=3.9
-    - BUILD_IMAGE=alpine3.10 BUILD_OS=Alpine BUILD_OS_VERSION=3.10
+    - BUILD_IMAGE=alpine3.11 BUILD_OS=Alpine BUILD_OS_VERSION=3.11
 
 language: generic
 services:
