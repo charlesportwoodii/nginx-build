@@ -2,7 +2,7 @@ SHELL := /bin/sh
 
 # Dependency Versions
 PCREVERSION?=8.43
-OPENSSLVERSION?=1.1.1e
+OPENSSLVERSION?=1.1.1f
 RELEASEVER?=1
 
 # Module versions
