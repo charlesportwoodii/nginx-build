@@ -46,7 +46,6 @@ deploy:
     secure: i7MbeRUGcOdnLCKlA89DC/yYC0Z32zl4W7jfk2zWOwuB5EN2GIpUdomrRCpb1Z+/4OeUTLinMp/U9UBtuF9WUVMgXCMK+rAun+bwudk3xsK9Ebe514XBQYayWOgscZqrslo3pF2n6YFFvuY3R8mFT806I4wPZ2urPaFGXQ4bsjE=
   bucket: $AWS_BUCKET
   local-dir: build
-  acl: ''
   on:
     tags: true
     all_branches: false
