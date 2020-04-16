@@ -7,7 +7,6 @@ env:
     - AWS_HOST=nyc3.digitaloceanspaces.com
     - AWS_BUCKET=com-erianna-travis
     - AWS_HOST_BUCKET="$AWS_BUCKET-$AWS_HOST"
-    - secure: WkFVI2+EgZ3dAJ6zj+Gmd6TcIu200bdYoAZdp8OAhK+JRIG7opr4sEc5xxnzqiDSRwrvVo8UeY3eEnWpIUNebBoAB3KHFOJZUyEycslSBlKHUdmJfxIEQV/1iEUdv38mmGiCi7JFABFRs/QV4COoKLtGmnuuTDyjTJEqFU1DGgg=
   jobs:
     - BUILD_IMAGE=focal BUILD_OS=Ubuntu BUILD_OS_VERSION=20.04
     - BUILD_IMAGE=bionic BUILD_OS=Ubuntu BUILD_OS_VERSION=18.04
@@ -43,7 +42,8 @@ script:
 deploy:
   provider: s3
   access_key_id: $AWS_ACCESS_KEY_ID
-  secret_access_key: $AWS_SECRET_ACCESS_KEY
+  secret_access_key:
+    secure: SeNHJBM59clvH6iEcY8xsmE0zYioQulMe/4nCebPcbLx+Rq+HZqJOMsGc12N0FRx22zufujt4cKzXkHel4uLiqppLOw1uoyBA7wAQ1npSnJQsZmVnngD3PgbS+qP5g+B50y4KyIDaNkL6JINz57JMq00bLF/gJiNB/v4b/AGk2w=
   bucket: $AWS_BUCKET
   local-dir: build
   skip_cleanup: true
