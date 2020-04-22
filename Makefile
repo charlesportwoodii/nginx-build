@@ -1,8 +1,12 @@
 SHELL := /bin/sh
 
+include .envs
+export
+
 # Dependency Versions
 PCREVERSION?=8.43
 OPENSSLVERSION?=1.1.1g
+VERSION?=
 RELEASEVER?=1
 
 # Module versions
@@ -21,7 +25,6 @@ SCRIPTPATH=$(shell pwd -P)
 CORES?=$(shell grep -c ^processor /proc/cpuinfo)
 RELEASE=$(shell lsb_release --codename | cut -f2)
 ARCH=$(shell arch)
-IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
 IS_ALPINE=$(shell if [ -f /etc/alpine-release ]; then echo 1; else echo 0; fi)
 
 description=$(shell cat debian/description-pak)
