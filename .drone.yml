@@ -12,6 +12,7 @@ steps:
     image: ubuntu:latest
     commands:
       - /bin/bash version.sh
+      - echo $(uname -s):$(uname -r):$(uname -v):$(uname -m)
       - mkdir -p build/deb
       - mkdir -p build/alpine
       - mkdir -p build/rpm
@@ -27,3 +28,5 @@ steps:
       - bash -lc "make build fpm_debian"
       - mkdir -p build/deb/$BUILD_IMAGE
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
+  
+  

@@ -162,9 +162,9 @@ nginx:
 		--add-dynamic-module=modules/nginx-rtmp-module \
 		--add-module=modules/lua-nginx-module \
 		--with-threads \
-		--with-pcre=./pcre-$(PCREVERSION) \
-		--with-openssl=./openssl-$(OPENSSLVERSION) \
-		--with-openssl-opt='enable-tls1_3 -fPIE'
+		--with-pcre=pcre-$(PCREVERSION) \
+		--with-openssl=openssl-$(OPENSSLVERSION) \
+		--with-openssl-opt='enable-tls1_3 -fPIE --release'
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
