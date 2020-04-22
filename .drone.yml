@@ -17,5 +17,7 @@ steps:
     depends_on:
       - "Extract Version"
     commands:
+      - ls -laht
+      - cat .envs
       - . .envs
       - bash -lc "make build fpm_debian VERISON=$VERSION RELEASEVER=$RELEASEVER"
