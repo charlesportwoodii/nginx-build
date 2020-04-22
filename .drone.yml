@@ -65,7 +65,7 @@ steps:
       - mkdir -p build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
       - mv *.rpm build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
   - name: rhel7
-    image: charlesportwoodii/centos:7-build
+    image: charlesportwoodii/rhel:7-build
     depends_on:
       - preflight
     environment:
