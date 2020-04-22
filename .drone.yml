@@ -77,7 +77,7 @@ steps:
       - mkdir -p build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
       - mv *.rpm build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
   - name: "alpine3.9"
-    image: charlesportwoodii/alpine3.9-build
+    image: charlesportwoodii/alpine:3.9-build
     depends_on:
       - preflight
     environment:
@@ -89,7 +89,7 @@ steps:
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/x86_64
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
   - name: "alpine3.10"
-    image: charlesportwoodii/alpine3.10-build
+    image: charlesportwoodii/alpine:3.10-build
     depends_on:
       - preflight
     environment:
@@ -101,7 +101,7 @@ steps:
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/x86_64
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
   - name: "alpine3.11"
-    image: charlesportwoodii/alpine3.11-build
+    image: charlesportwoodii/alpine:3.11-build
     depends_on:
       - preflight
     environment:
