@@ -8,6 +8,7 @@ PCREVERSION?=8.43
 OPENSSLVERSION?=1.1.1g
 VERSION?=
 RELEASEVER?=1
+OPENSSL_CI_HACK?=0
 
 # Module versions
 MODULE_LUA_VERSION="v0.10.14"
@@ -79,6 +80,11 @@ openssl:
 	cd /tmp/nginx-$(VERSION) && \
 	wget https://www.openssl.org/source/openssl-$(OPENSSLVERSION).tar.gz && \
 	tar -xf openssl-$(OPENSSLVERSION).tar.gz
+
+# Hack for weird issue with Drone CI not detecting x86_64-whatever-linux2 platform correctly
+ifeq ($(OPENSSL_CI_HACK),"1")
+	sed -i '427iGUESSOS=x86_64-whatever-linux2' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
+endif
 
 nginx:
 	# Download Nginx Modules
