@@ -8,10 +8,13 @@ environment:
   DEFAULT_REVISION: 1
 
 steps:
-  - name: version
+  - name: Extract Version
     image: ubuntu:latest
     commands:
       - /bin/bash version.sh
-      - cat .envs
-
+  - name: Build Focal (Ubuntu 20.04)
+    image: charlesportwoodii/ubuntu:20.04-build
+    commands:
+      - source .envs
+      - bash -lc "make build fpm_debian VERISON=$VERSION RELEASEVER=$RELEASEVER"
     
