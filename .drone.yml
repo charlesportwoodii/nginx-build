@@ -11,7 +11,7 @@ steps:
   - name: version
     image: charlesportwoodii/alpine:3.11-base
     commands:
-      - if [ -n "${DRONE_TAG}" ]; then echo VERSION=$(cut -d '-' -f 1 <<< "${DRONE_TAG}") > .envs; RELEASEVER=$(cut -d '-' -f 2 <<< "$TRAVIS_TAG") >> .envs; else echo VERSION=${DEFAULT_VERISON} > .envs; echo RELEASEVER=${DEFAULT_REVISION} >> .envs; fi
+      - if [ -n "${DRONE_TAG}" ]; then echo "VERSION=$(cut -d '-' -f 1 <<< \"${DRONE_TAG}\")" > .envs; echo "RELEASEVER=$(cut -d '-' -f 2 <<< \"${DRONE_TAG}\")" >> .envs; else echo "VERSION=$DEFAULT_VERISON" > .envs; echo "RELEASEVER=$DEFAULT_REVISION" >> .envs; fi
       - cat .envs
 
     
