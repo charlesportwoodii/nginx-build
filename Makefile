@@ -81,7 +81,11 @@ openssl:
 	wget https://www.openssl.org/source/openssl-$(OPENSSLVERSION).tar.gz && \
 	tar -xf openssl-$(OPENSSLVERSION).tar.gz
 
-# Hack for weird issue with Drone CI not detecting x86_64-whatever-linux2 platform correctly
+# Nginx uses ./config instead of ./Configure for OpenSSL's configuration
+# which doesn't provide cross-compile-prefix platform detection of platform detection fails
+# This manually injects the correct x86_64-linux platform data.
+#
+# TODO: update this to provide manual platform definitions
 ifeq ($(OPENSSL_CI_HACK),1)
 	sed -i '427iGUESSOS=x86_64-whatever-linux2' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
 	sed -i '827iOUT=linux-x86_64' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config

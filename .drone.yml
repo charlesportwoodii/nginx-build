@@ -16,7 +16,7 @@ steps:
       - mkdir -p build/deb
       - mkdir -p build/alpine
       - mkdir -p build/rpm
-  - name: Build Focal (Ubuntu 20.04)
+  - name: focal
     image: charlesportwoodii/ubuntu:20.04-build
     depends_on:
       - preflight
@@ -28,5 +28,89 @@ steps:
       - bash -lc "make build fpm_debian OPENSSL_CI_HACK=1"
       - mkdir -p build/deb/$BUILD_IMAGE
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
+  - name: bionic
+    image: charlesportwoodii/ubuntu:18.04-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: bionic
+      BUILD_OS: Ubuntu
+      BUILD_OS_VERSION: "18.04"
+    commands:
+      - bash -lc "make build fpm_debian OPENSSL_CI_HACK=1"
+      - mkdir -p build/deb/$BUILD_IMAGE
+      - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
+  - name: trusty
+    image: charlesportwoodii/ubuntu:16.04-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: trusty
+      BUILD_OS: Ubuntu
+      BUILD_OS_VERSION: "16.04"
+    commands:
+      - bash -lc "make build fpm_debian OPENSSL_CI_HACK=1"
+      - mkdir -p build/deb/$BUILD_IMAGE
+      - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
+  - name: centos7
+    image: charlesportwoodii/centos:7-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: centos7
+      BUILD_OS: CentOS
+      BUILD_OS_VERSION: "7"
+    commands:
+      - bash -lc "make build fpm_rpm OPENSSL_CI_HACK=1"
+      - mkdir -p build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
+      - mv *.rpm build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
+  - name: rhel7
+    image: charlesportwoodii/centos:7-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: rhel7
+      BUILD_OS: CentOS
+      BUILD_OS_VERSION: "7"
+    commands:
+      - bash -lc "make build fpm_rpm OPENSSL_CI_HACK=1"
+      - mkdir -p build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
+      - mv *.rpm build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
+  - name: alpine3.9
+    image: charlesportwoodii/alpine3.9-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: alpine3.9
+      BUILD_OS: Alpine
+      BUILD_OS_VERSION: "3.9"
+    commands:
+      - bash -lc "make build fpm_rpm OPENSSL_CI_HACK=1"
+      - mkdir -p uild/alpine/v$BUILD_OS_VERSION/x86_64
+      - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
+  - name: alpine3.10
+    image: charlesportwoodii/alpine3.9-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: alpine3.10
+      BUILD_OS: Alpine
+      BUILD_OS_VERSION: "3.10"
+    commands:
+      - bash -lc "make build fpm_rpm OPENSSL_CI_HACK=1"
+      - mkdir -p uild/alpine/v$BUILD_OS_VERSION/x86_64
+      - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
+  - name: alpine3.11
+    image: charlesportwoodii/alpine3.1-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: alpine3.11
+      BUILD_OS: Alpine
+      BUILD_OS_VERSION: "3.11"
+    commands:
+      - bash -lc "make build fpm_rpm OPENSSL_CI_HACK=1"
+      - mkdir -p uild/alpine/v$BUILD_OS_VERSION/x86_64
+      - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
   
   
