@@ -84,7 +84,8 @@ openssl:
 # Hack for weird issue with Drone CI not detecting x86_64-whatever-linux2 platform correctly
 ifeq ($(OPENSSL_CI_HACK),1)
 	sed -i '427iGUESSOS=x86_64-whatever-linux2' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
-	sed -i '814iOUT=linux-x86_64' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
+	sed -i '816iOUT=linux-x86_64' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
+	cat /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
 endif
 
 nginx:
