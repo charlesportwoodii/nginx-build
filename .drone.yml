@@ -11,7 +11,7 @@ steps:
   - name: version
     image: ubuntu:latest
     commands:
-      - /bin/bash version
+      - /bin/bash version.sh
       - cat .envs
 
     
