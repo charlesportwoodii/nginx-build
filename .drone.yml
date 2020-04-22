@@ -40,12 +40,12 @@ steps:
       - bash -lc "make build fpm_debian OPENSSL_CI_HACK=1"
       - mkdir -p build/deb/$BUILD_IMAGE
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
-  - name: trusty
+  - name: xenial
     image: charlesportwoodii/ubuntu:16.04-build
     depends_on:
       - preflight
     environment:
-      BUILD_IMAGE: trusty
+      BUILD_IMAGE: xenial
       BUILD_OS: Ubuntu
       BUILD_OS_VERSION: "16.04"
     commands:
