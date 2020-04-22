@@ -14,7 +14,8 @@ steps:
       - /bin/bash version.sh
   - name: Build Focal (Ubuntu 20.04)
     image: charlesportwoodii/ubuntu:20.04-build
+    depends_on:
+      - "Extract Version"
     commands:
-      - source .envs
+      - . .envs
       - bash -lc "make build fpm_debian VERISON=$VERSION RELEASEVER=$RELEASEVER"
-    
