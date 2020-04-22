@@ -82,7 +82,7 @@ openssl:
 	tar -xf openssl-$(OPENSSLVERSION).tar.gz
 
 # Hack for weird issue with Drone CI not detecting x86_64-whatever-linux2 platform correctly
-ifeq ($(OPENSSL_CI_HACK),"1")
+ifeq ($(OPENSSL_CI_HACK),1)
 	sed -i '427iGUESSOS=x86_64-whatever-linux2' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
 endif
 

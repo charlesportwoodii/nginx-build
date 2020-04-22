@@ -24,9 +24,8 @@ steps:
       BUILD_IMAGE: focal
       BUILD_OS: Ubuntu
       BUILD_OS_VERSION: "20.04"
-      OPENSSL_CI_HACK: "1"
     commands:
-      - bash -lc "make build fpm_debian"
+      - bash -lc "make build fpm_debian OPENSSL_CI_HACK=1"
       - mkdir -p build/deb/$BUILD_IMAGE
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
   
