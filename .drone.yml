@@ -85,7 +85,7 @@ steps:
       BUILD_OS: Alpine
       BUILD_OS_VERSION: "3.9"
     commands:
-      - bash -lc "make build fpm_alpine OPENSSL_CI_HACK=1"
+      - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=1"
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/x86_64
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
   - name: "alpine3.10"
@@ -97,7 +97,7 @@ steps:
       BUILD_OS: Alpine
       BUILD_OS_VERSION: "3.10"
     commands:
-      - bash -lc "make build fpm_alpine OPENSSL_CI_HACK=1"
+      - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=1"
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/x86_64
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
   - name: "alpine3.11"
@@ -109,7 +109,7 @@ steps:
       BUILD_OS: Alpine
       BUILD_OS_VERSION: "3.11"
     commands:
-      - bash -lc "make build fpm_alpine OPENSSL_CI_HACK=1"
+      - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=1"
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/x86_64
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
   
