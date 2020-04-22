@@ -8,13 +8,22 @@ environment:
   DEFAULT_REVISION: 1
 
 steps:
-  - name: Extract Version
+  - name: preflight
     image: ubuntu:latest
     commands:
       - /bin/bash version.sh
+      - mkdir -p build/deb
+      - mkdir -p build/alpine
+      - mkdir -p build/rpm
   - name: Build Focal (Ubuntu 20.04)
     image: charlesportwoodii/ubuntu:20.04-build
     depends_on:
-      - "Extract Version"
+      - preflight
+    environment:
+      BUILD_IMAGE: focal
+      BUILD_OS: Ubuntu
+      BUILD_OS_VERSION: "20.04"
     commands:
       - bash -lc "make build fpm_debian"
+      - mkdir -p build/deb/$BUILD_IMAGE
+      - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/

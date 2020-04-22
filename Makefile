@@ -116,7 +116,7 @@ nginx:
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/openresty/set-misc-nginx-module -b $(MODULE_SETMISC_VERSION) --depth=5
 
-	cd /tmp/nginx-$(VERISON)/modules && \
+	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/sergey-dryabzhinsky/nginx-rtmp-module -b $(MODULE_RTMP_VERSION) --depth=5
 
 	# Configure
