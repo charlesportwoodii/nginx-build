@@ -207,8 +207,8 @@ steps:
         from_secret: DOCKER_PASSWORD
     commands:
       - docker build $(for i in $(cat .envs); do echo -n "--build-arg $i "; done) -t charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//") -t charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//") --no-cache --compress --squash .
-      - echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
-      #- docker push charlesportwoodii/nginx:$(head .envs -n 1 | sed "s/VERSION=//") 
+      - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+      #- docker push charlesportwoodii/nginx:$(head .envs -n 1 | sed "s/VERSION=//")
       #- docker push charlesportwoodii/nginx:$(tail .envs -n 1 | sed "s/SHORT_VERSION=//")
     volumes:
       - name: docker_sock
@@ -218,5 +218,3 @@ volumes:
   - name: docker_sock
     host:
       path: /var/run/docker.sock
-      
-
