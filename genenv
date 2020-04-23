@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import semver
+
+def run(args):
+    return exec()
+
+def exec():
+    tag = os.getenv("DRONE_TAG")
+    default_version = os.getenv("DEFAULT_VERSION")
+    default_revision = os.getenv("DEFAULT_REVISION")
+
+    env = {}
+    if (tag == None):
+        ver = semver.parse(default_version)
+
+        env['VERSION'] = default_version
+        env['RELEASEVER'] = default_revision
+
+        if (ver['minor'] % 2 == 0):
+            env['PACKAGE_NAME'] = "nginx"
+        else:
+            env['PACKAGE_NAME'] = "nginx-mainline"
+        
+        env['SHORT_VERSION'] = str(ver['major']) + "." + str(ver['minor'])
+    else:
+        ver = semver.parse(tag)
+        env['VERSION'] = str(ver['major']) + "." + str(ver['minor']) + "." + str(ver['patch'])
+        env['RELEASEVER'] = str(ver['prerelease'])
+
+        if (ver['minor'] % 2 == 0):
+            env['PACKAGE_NAME'] = "nginx"
+        else:
+            env['PACKAGE_NAME'] = "nginx-mainline"
+        
+        env['SHORT_VERSION'] = str(ver['major']) + "." + str(ver['minor'])
+
+    try:
+        os.remove(".envs")
+    except OSError:
+        pass
+    f = open('.envs', 'a')
+    for k, v in enumerate(env, start=0):
+        f.write(v + "=" + env[v] + "\n");
+    
+    f.close()
+
+    print(env)
+
+parser = argparse.ArgumentParser(description='Generates an appropriate .envs file for populate by process')
+
+args = parser.parse_args()
+run(args)

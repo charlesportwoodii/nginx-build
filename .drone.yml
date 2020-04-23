@@ -9,9 +9,10 @@ environment:
 
 steps:
   - name: preflight
-    image: ubuntu:latest
+    image: python:3-alpine
     commands:
-      - /bin/bash version.sh
+      - pip3 install semver
+      - ./genver
       - echo $(uname -s):$(uname -r):$(uname -v):$(uname -m)
       - mkdir -p build/deb
       - mkdir -p build/alpine
@@ -194,4 +195,22 @@ steps:
       password:
         from_secret: MATRIX_PASSWORD
       template: "Nginx packages have been uploaded to S3"
+  - name: docker
+    depends_on:
+      - "alpine3.11"
+      - "deploy"
+    image: docker
+    environment:
+      username:
+        from_secret: DOCKER_USERNAME
+      password:
+        from_secret: DOCKER_PASSWORD
+    commands:
+      - docker build $(for i in `cat .envs`; do out+="--build-arg $i " ; done; echo $out;out="") -t charlesportwoodii/nginx:$(head .envs -n 1 | sed "s/VERSION=//") -t charlesportwoodii/nginx:$(tail .envs -n 1 | sed "s/SHORT_VERSION=//") --no-cache --compress --squash .
+      - docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+      #- docker push charlesportwoodii/nginx:$(head .envs -n 1 | sed "s/VERSION=//") 
+      #- docker push charlesportwoodii/nginx:$(tail .envs -n 1 | sed "s/SHORT_VERSION=//")
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      
 
