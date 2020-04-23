@@ -211,6 +211,12 @@ steps:
       #- docker push charlesportwoodii/nginx:$(head .envs -n 1 | sed "s/VERSION=//") 
       #- docker push charlesportwoodii/nginx:$(tail .envs -n 1 | sed "s/SHORT_VERSION=//")
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - name: docker_sock
+        path: /var/run/docker.sock
+
+  volumes:
+    - name: docker_sock
+      host:
+        path: /var/run/docker.sock
       
 
