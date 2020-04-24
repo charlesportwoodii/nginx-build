@@ -136,6 +136,7 @@ steps:
       region:
         from_secret: AWS_REGION
       source: build/**/*
+      strip_prefix: builds/
       path_style: true
       target: /
       acl:
