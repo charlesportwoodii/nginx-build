@@ -128,7 +128,7 @@ steps:
       bucket:
         from_secret: AWS_BUCKET
       endpoint:
-        from_secret: AWS_HOST
+        from_secret: AWS_HOST_BUCKET
       access_key:
         from_secret: AWS_ACCESS_KEY_ID
       secret_key:
