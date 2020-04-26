@@ -128,12 +128,15 @@ steps:
       bucket:
         from_secret: AWS_BUCKET
       endpoint:
-        from_secret: AWS_HOST
+        from_secret: AWS_HOST_BUCKET
       access_key:
         from_secret: AWS_ACCESS_KEY_ID
       secret_key:
         from_secret: AWS_SECRET_ACCESS_KEY
+      region:
+        from_secret: AWS_REGION
       source: build/**/*
+      strip_prefix: builds/
       path_style: true
       target: /
       delete: false
@@ -197,6 +200,9 @@ steps:
     depends_on:
       - "alpine3.11"
       - "deploy"
+    when:
+      event:
+        - tag
     image: docker
     environment:
       username:
@@ -205,9 +211,9 @@ steps:
         from_secret: DOCKER_PASSWORD
     commands:
       - docker build $(for i in $(cat .envs); do echo -n "--build-arg $i "; done) -t charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//") -t charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//") --no-cache --compress --squash .
-      - docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
-      #- docker push charlesportwoodii/nginx:$(head .envs -n 1 | sed "s/VERSION=//")
-      #- docker push charlesportwoodii/nginx:$(tail .envs -n 1 | sed "s/SHORT_VERSION=//")
+      - docker login -u=$username -p=$password
+      - docker push charlesportwoodii/nginx:$(head .envs -n 1 | sed "s/VERSION=//")
+      - docker push charlesportwoodii/nginx:$(tail .envs -n 1 | sed "s/SHORT_VERSION=//")
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
