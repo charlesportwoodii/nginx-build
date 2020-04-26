@@ -128,13 +128,11 @@ steps:
       bucket:
         from_secret: AWS_BUCKET
       endpoint:
-        from_secret: AWS_HOST_BUCKET
+        from_secret: AWS_HOST
       access_key:
         from_secret: AWS_ACCESS_KEY_ID
       secret_key:
         from_secret: AWS_SECRET_ACCESS_KEY
-      region:
-        from_secret: AWS_REGION
       source: build/**/*
       strip_prefix: builds/
       path_style: true
