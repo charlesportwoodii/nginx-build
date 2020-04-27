@@ -87,8 +87,8 @@ steps:
       BUILD_OS_VERSION: "3.9"
     commands:
       - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=1"
-      - mkdir -p build/alpine/v$BUILD_OS_VERSION/x86_64
-      - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
+      - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/x86_64
+      - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/x86_64
   - name: "alpine3.10"
     image: charlesportwoodii/alpine:3.10-build
     depends_on:
@@ -99,8 +99,8 @@ steps:
       BUILD_OS_VERSION: "3.10"
     commands:
       - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=1"
-      - mkdir -p build/alpine/v$BUILD_OS_VERSION/x86_64
-      - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
+      - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/x86_64
+      - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/x86_64
   - name: "alpine3.11"
     image: charlesportwoodii/alpine:3.11-build
     depends_on:
@@ -111,8 +111,8 @@ steps:
       BUILD_OS_VERSION: "3.11"
     commands:
       - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=1"
-      - mkdir -p build/alpine/v$BUILD_OS_VERSION/x86_64
-      - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
+      - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/x86_64
+      - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/x86_64
   - name: deploy
     image: plugins/s3-sync
     when:
