@@ -71,7 +71,7 @@ steps:
       - preflight
     environment:
       BUILD_IMAGE: rhel7
-      BUILD_OS: CentOS
+      BUILD_OS: RHEL
       BUILD_OS_VERSION: "7"
     commands:
       - bash -lc "make build fpm_rpm OPENSSL_CI_HACK=1"
