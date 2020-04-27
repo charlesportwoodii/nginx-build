@@ -142,7 +142,7 @@ steps:
       delete: false
       acl:
         "*": public-read
-  - name: update-packages
+  - name: update-apt-packages
     depends_on:
       - deploy
     when:
@@ -159,7 +159,39 @@ steps:
       port: 22
       script:
         - /usr/local/bin/update-apt-packages
-        - /usr/local/bin/update-rpm-packages
+  - name: update-rpm-packages
+    depends_on:
+      - deploy
+    when:
+      event:
+        - tag
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: SSH_HOST
+      username:
+        from_secret: SSH_USERNAME
+      key:
+        from_secret: SSH_KEY
+      port: 22
+      script:
+        - /usr/local/bin/update-alpine-packages
+  - name: update-apt-packages
+    depends_on:
+      - deploy
+    when:
+      event:
+        - tag
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: SSH_HOST
+      username:
+        from_secret: SSH_USERNAME
+      key:
+        from_secret: SSH_KEY
+      port: 22
+      script:
         - /usr/local/bin/update-alpine-packages
   - name: matrix_notify
     image: plugins/matrix
@@ -200,6 +232,7 @@ steps:
     depends_on:
       - "alpine3.11"
       - "deploy"
+      - "update-alpine-packages"
     when:
       event:
         - tag
