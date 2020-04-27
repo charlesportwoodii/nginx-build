@@ -115,6 +115,9 @@ steps:
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/x86_64
   - name: deploy
     image: plugins/s3-sync
+    when:
+      event:
+        - tag
     depends_on:
       - focal
       - bionic
