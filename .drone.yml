@@ -175,8 +175,8 @@ steps:
         from_secret: SSH_KEY
       port: 22
       script:
-        - /usr/local/bin/update-alpine-packages
-  - name: update-apt-packages
+        - /usr/local/bin/update-rpm-packages
+  - name: update-alpine-packages
     depends_on:
       - deploy
     when:
