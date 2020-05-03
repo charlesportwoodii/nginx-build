@@ -1,9 +1,14 @@
 SHELL := /bin/sh
 
+include .envs
+export
+
 # Dependency Versions
 PCREVERSION?=8.43
 OPENSSLVERSION?=1.1.1g
+VERSION?=
 RELEASEVER?=1
+OPENSSL_CI_HACK?=0
 
 # Module versions
 MODULE_LUA_VERSION="v0.10.14"
@@ -21,7 +26,6 @@ SCRIPTPATH=$(shell pwd -P)
 CORES?=$(shell grep -c ^processor /proc/cpuinfo)
 RELEASE=$(shell lsb_release --codename | cut -f2)
 ARCH=$(shell arch)
-IS_ARM=$(shell if [[ "$(ARCH)" == "arm"* ]]; then echo 1; else echo 0; fi)
 IS_ALPINE=$(shell if [ -f /etc/alpine-release ]; then echo 1; else echo 0; fi)
 
 description=$(shell cat debian/description-pak)
@@ -77,6 +81,16 @@ openssl:
 	wget https://www.openssl.org/source/openssl-$(OPENSSLVERSION).tar.gz && \
 	tar -xf openssl-$(OPENSSLVERSION).tar.gz
 
+# Nginx uses ./config instead of ./Configure for OpenSSL's configuration
+# which doesn't provide cross-compile-prefix platform detection of platform detection fails
+# This manually injects the correct x86_64-linux platform data.
+#
+# TODO: update this to provide manual platform definitions
+ifeq ($(OPENSSL_CI_HACK),1)
+	sed -i '427iGUESSOS=x86_64-whatever-linux2' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
+	sed -i '827iOUT=linux-x86_64' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
+endif
+
 nginx:
 	# Download Nginx Modules
 	mkdir -p /tmp/nginx-$(VERSION)/modules
@@ -113,7 +127,7 @@ nginx:
 	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/openresty/set-misc-nginx-module -b $(MODULE_SETMISC_VERSION) --depth=5
 
-	cd /tmp/nginx-$(VERISON)/modules && \
+	cd /tmp/nginx-$(VERSION)/modules && \
 	git clone https://github.com/sergey-dryabzhinsky/nginx-rtmp-module -b $(MODULE_RTMP_VERSION) --depth=5
 
 	# Configure
@@ -159,9 +173,9 @@ nginx:
 		--add-dynamic-module=modules/nginx-rtmp-module \
 		--add-module=modules/lua-nginx-module \
 		--with-threads \
-		--with-pcre=./pcre-$(PCREVERSION) \
-		--with-openssl=./openssl-$(OPENSSLVERSION) \
-		--with-openssl-opt='enable-tls1_3 -fPIE'
+		--with-pcre=pcre-$(PCREVERSION) \
+		--with-openssl=openssl-$(OPENSSLVERSION) \
+		--with-openssl-opt='enable-tls1_3 -fPIE --release'
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \

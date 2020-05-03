@@ -1,3 +1,4 @@
+.envs
 *.deb
 *.rpm
 *.apk
