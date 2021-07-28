@@ -97,8 +97,7 @@ nginx:
 
 	# Nginx Lua Module
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/openresty/lua-nginx-module -b $(MODULE_LUA_VERSION) --depth=5 && \
-	cd lua-nginx-module
+	git clone https://github.com/openresty/lua-nginx-module -b $(MODULE_LUA_VERSION) --depth=5
 
 	# Nginx Devel Kit
 	cd /tmp/nginx-$(VERSION)/modules && \
@@ -148,7 +147,7 @@ nginx:
 		--with-http_sub_module \
 		--with-http_mp4_module \
 		--with-stream \
-    	--with-stream_ssl_module \
+		--with-stream_ssl_module \
 		--with-stream_realip_module \
 		--with-stream_geoip_module \
 		--with-stream_ssl_preread_module \
@@ -171,7 +170,7 @@ nginx:
 		--add-dynamic-module=modules/ngx_brotli \
 		--add-dynamic-module=modules/set-misc-nginx-module \
 		--add-dynamic-module=modules/nginx-rtmp-module \
-		--add-module=modules/lua-nginx-module \
+		--add-dynamic-module=modules/lua-nginx-module \
 		--with-threads \
 		--with-pcre=pcre-$(PCREVERSION) \
 		--with-openssl=openssl-$(OPENSSLVERSION) \
@@ -225,6 +224,10 @@ pre_package:
 	mv /tmp/nginx-$(VERSION)-install/etc/nginx/modules /tmp/nginx-$(VERSION)-install/usr/lib/nginx/
 	# Copy systemd file
 
+	# Install RestyCore Lua FFI
+	git clone https://github.com/openresty/lua-resty-core /tmp/lua-resty-core && \
+	cd /tmp/lua-resty-core && \
+	make install DESTDIR=/tmp/nginx-$(VERSION)
 
 ifeq ($(IS_ALPINE), 1)
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/init.d
