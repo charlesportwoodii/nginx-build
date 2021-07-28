@@ -113,7 +113,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: deploy
+name: build-arm64
 
 depends_on:
   - common
@@ -123,7 +123,7 @@ environment:
   DEFAULT_REVISION: 1
 
 platform:
-  arch: amd64
+  arch: arm64
 
 steps:
   - name: "alpine3.14"
