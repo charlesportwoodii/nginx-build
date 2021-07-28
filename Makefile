@@ -136,6 +136,7 @@ nginx:
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	export CLFAGS=""  && \
 	./configure \
+		--with-cc-opt="-Wno-error" \
 		--with-compat \
 		--with-cpu-opt=generic \
 		--with-http_geoip_module \
@@ -170,7 +171,7 @@ nginx:
 		--add-dynamic-module=modules/ngx_brotli \
 		--add-dynamic-module=modules/set-misc-nginx-module \
 		--add-dynamic-module=modules/nginx-rtmp-module \
-		--add-dynamic-module=modules/lua-nginx-module \
+		--add-module=modules/lua-nginx-module \
 		--with-threads \
 		--with-pcre=pcre-$(PCREVERSION) \
 		--with-openssl=openssl-$(OPENSSLVERSION) \
@@ -225,9 +226,20 @@ pre_package:
 	# Copy systemd file
 
 	# Install RestyCore Lua FFI
+	rm -rf /tmp/lua-resty-core
+
 	git clone https://github.com/openresty/lua-resty-core /tmp/lua-resty-core && \
 	cd /tmp/lua-resty-core && \
-	make install DESTDIR=/tmp/nginx-$(VERSION)
+	make install DESTDIR=/tmp/nginx-$(VERSION)-install LUA_VERSION=5.1
+
+	rm -rf /tmp/lua-resty-lrucache
+
+	git clone https://github.com/openresty/lua-resty-lrucache /tmp/lua-resty-lrucache && \
+	cd /tmp/lua-resty-lrucache && \
+	make install DESTDIR=/tmp/nginx-$(VERSION)-install LUA_VERSION=5.1
+
+	mkdir -p /tmp/nginx-$(VERSION)-install/usr/local/share/lua/
+	mv /tmp/nginx-$(VERSION)-install/usr/local/lib/lua/5.1 /tmp/nginx-$(VERSION)-install/usr/local/share/lua/
 
 ifeq ($(IS_ALPINE), 1)
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/init.d
