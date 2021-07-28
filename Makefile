@@ -241,6 +241,8 @@ pre_package:
 	mkdir -p /tmp/nginx-$(VERSION)-install/usr/local/share/lua/
 	mv /tmp/nginx-$(VERSION)-install/usr/local/lib/lua/5.1 /tmp/nginx-$(VERSION)-install/usr/local/share/lua/
 
+	openssl dhparam -out /tmp/nginx-$(VERSION)-install/etc/nginx/conf/ssl/dhparams.pem 4096
+
 ifeq ($(IS_ALPINE), 1)
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/init.d
 	cp $(SCRIPTPATH)/alpine/nginx.rc /tmp/nginx-$(VERSION)-install/etc/init.d
