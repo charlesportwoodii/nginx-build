@@ -1,11 +1,14 @@
 ---
 kind: pipeline
 type: docker
-name: default
+name: common
 
 environment:
-  DEFAULT_VERSION: 1.18.0
+  DEFAULT_VERSION: 1.21.1
   DEFAULT_REVISION: 1
+
+platform:
+  arch: amd64
 
 steps:
   - name: preflight
@@ -17,6 +20,23 @@ steps:
       - mkdir -p build/deb
       - mkdir -p build/alpine
       - mkdir -p build/rpm
+
+---
+kind: pipeline
+type: docker
+name: build-amd64
+
+depends_on:
+  - common
+
+environment:
+  DEFAULT_VERSION: 1.21.1
+  DEFAULT_REVISION: 1
+
+platform:
+  arch: amd64
+
+steps:
   - name: focal
     image: charlesportwoodii/ubuntu:20.04-build
     depends_on:
@@ -88,8 +108,52 @@ steps:
     commands:
       - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=1"
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/x86_64
+      - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/x86_64
+
+---
+kind: pipeline
+type: docker
+name: deploy
+
+depends_on:
+  - common
+
+environment:
+  DEFAULT_VERSION: 1.21.1
+  DEFAULT_REVISION: 1
+
+platform:
+  arch: amd64
+
+steps:
+  - name: "alpine3.14"
+    image: charlesportwoodii/alpine:3.14-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: "alpine3.14"
+      BUILD_OS: Alpine
+      BUILD_OS_VERSION: "3.14"
+    commands:
+      - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=0"
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/aarch64
-      - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/$(arch)
+      - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/aarch64
+
+---
+kind: pipeline
+type: docker
+name: deploy
+
+depends_on:
+  - common
+  - build-amd64
+  - build-arm64
+
+environment:
+  DEFAULT_VERSION: 1.21.1
+  DEFAULT_REVISION: 1
+
+steps:
   - name: deploy
     image: plugins/s3-sync
     when:
@@ -98,12 +162,10 @@ steps:
     depends_on:
       - focal
       - bionic
-      - xenial
       - centos7
       - rhel7
-      - "alpine3.9"
-      - "alpine3.10"
       - "alpine3.11"
+      - "alpine3.14"
     settings:
       bucket:
         from_secret: AWS_BUCKET
@@ -175,12 +237,10 @@ steps:
     depends_on:
       - focal
       - bionic
-      - xenial
       - centos7
       - rhel7
-      - "alpine3.9"
-      - "alpine3.10"
       - "alpine3.11"
+      - "alpine3.14"
     settings:
       homeserver: https://matrix.erianna.com
       roomid:
@@ -207,7 +267,7 @@ steps:
       template: "Nginx packages have been uploaded to S3"
   - name: docker
     depends_on:
-      - "alpine3.11"
+      - "alpine3.14"
       - "deploy"
       - "update-alpine-packages"
     when:
@@ -220,10 +280,9 @@ steps:
       password:
         from_secret: DOCKER_PASSWORD
     commands:
-      - docker build $(for i in $(cat .envs); do echo -n "--build-arg $i "; done) -t charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//") -t charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//") --no-cache --compress --squash .
+      - docker buildx create --use
       - docker login -u=$username -p=$password
-      - docker push charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//")
-      - docker push charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//")
+      - docker buildx build --push --platform linux/arm64/v8,linux/amd64 $(for i in $(cat .envs); do echo -n "--build-arg $i "; done) -t charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//") -t charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//") --no-cache --compress --squash .
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
