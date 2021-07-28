@@ -11,8 +11,8 @@ RELEASEVER?=1
 OPENSSL_CI_HACK?=0
 
 # Module versions
-MODULE_LUA_VERSION="v0.10.14"
-MODULE_DEVELKIT_VERSION="v0.3.0"
+MODULE_LUA_VERSION="v0.10.20"
+MODULE_DEVELKIT_VERSION="v0.3.1"
 MODULE_REDIS2_VERSION="v0.15"
 MODULE_BROTLI_VERSION="v0.1.2"
 MODULE_HEADERSMORE_VERSION="v0.33"
@@ -133,7 +133,7 @@ nginx:
 	# Configure
 	cd /tmp/nginx-$(VERSION) && \
 	export LUAJIT_LIB=/usr/local/lib && \
- 	export LUAJIT_INC=/usr/local/include/luajit-2.0 && \
+ 	export LUAJIT_INC=/usr/local/include/luajit-2.1 && \
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	export CLFAGS=""  && \
 	./configure \
@@ -253,7 +253,7 @@ fpm_debian: pre_package
 		--depends "luajit > 0" \
 		--depends "libluajit-5.1-common > 0" \
 		--depends "libluajit-5.1-2 > 0" \
-		--depends "luajit-2.0 > 0" \
+		--depends "luajit-2.1 > 0" \
 		--depends "geoip-database > 0" \
 		--depends "libbrotli > 0" \
 		--deb-systemd-restart-after-upgrade \
@@ -278,7 +278,7 @@ fpm_rpm: pre_package
 		--description "$(RELEASENAME), $(VERSION)" \
 		--vendor "Charles R. Portwood II" \
 		--depends "luajit > 0" \
-		--depends "luajit-2.0 > 0" \
+		--depends "luajit-2.1 > 0" \
 		--depends "GeoIP > 0" \
 		--depends "libbrotli > 0" \
 		--rpm-digest sha384 \
@@ -303,7 +303,7 @@ fpm_alpine: pre_package
 		--vendor "Charles R. Portwood II" \
 		--depends "luajit" \
 		--depends "luajit-dev" \
-		--depends "luajit-2.0" \
+		--depends "luajit-2.1" \
 		--depends "geoip" \
 		--depends "bash" \
 		--depends "openrc" \
