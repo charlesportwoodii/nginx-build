@@ -7,9 +7,6 @@ environment:
   DEFAULT_VERSION: 1.21.1
   DEFAULT_REVISION: 1
 
-platform:
-  arch: amd64
-
 steps:
   - name: preflight
     image: python:3-alpine
@@ -49,8 +46,6 @@ steps:
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
   - name: bionic
     image: charlesportwoodii/ubuntu:18.04-build
-    depends_on:
-      - preflight
     environment:
       BUILD_IMAGE: bionic
       BUILD_OS: Ubuntu
@@ -61,8 +56,6 @@ steps:
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
   - name: centos7
     image: charlesportwoodii/centos:7-build
-    depends_on:
-      - preflight
     environment:
       BUILD_IMAGE: centos7
       BUILD_OS: CentOS
@@ -73,8 +66,6 @@ steps:
       - mv *.rpm build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
   - name: rhel7
     image: charlesportwoodii/rhel:7-build
-    depends_on:
-      - preflight
     environment:
       BUILD_IMAGE: rhel7
       BUILD_OS: RHEL
@@ -85,8 +76,6 @@ steps:
       - mv *.rpm build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
   - name: "alpine3.11"
     image: charlesportwoodii/alpine:3.11-build
-    depends_on:
-      - preflight
     environment:
       BUILD_IMAGE: "alpine3.11"
       BUILD_OS: Alpine
@@ -97,8 +86,6 @@ steps:
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/x86_64
   - name: "alpine3.14"
     image: charlesportwoodii/alpine:3.14-build
-    depends_on:
-      - preflight
     environment:
       BUILD_IMAGE: "alpine3.14"
       BUILD_OS: Alpine
