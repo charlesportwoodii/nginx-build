@@ -6,12 +6,12 @@ LABEL description="Nginx Docker image with several useful plugins."
 
 ARG PACKAGE_NAME="nginx-mainline"
 
-RUN apk update && \
-    apk add ${PACKAGE_NAME} --no-cache && \
-    rm -rf /var/cache/apk/* && \
-    mkdir -p /etc/nginx/conf/conf.d /etc/nginx/conf/includes /var/www && \
-    ln -sf /dev/stdout /var/log/nginx/access.log && \
-	ln -sf /dev/stderr /var/log/nginx/error.log
+RUN apk update
+RUN apk add ${PACKAGE_NAME} --no-cache; exit 0
+RUN rm -rf /var/cache/apk/*
+RUN mkdir -p /etc/nginx/conf/conf.d /etc/nginx/conf/includes /var/www
+RUN ln -sf /dev/stdout /var/log/nginx/access.log
+RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 # Define mountable directories.
 VOLUME ["/etc/nginx/conf/conf.d", "/etc/nginx/conf/includes", "/etc/nginx/conf/ssl", "/var/www/"]
