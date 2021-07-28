@@ -39,8 +39,6 @@ platform:
 steps:
   - name: focal
     image: charlesportwoodii/ubuntu:20.04-build
-    depends_on:
-      - preflight
     environment:
       BUILD_IMAGE: focal
       BUILD_OS: Ubuntu
@@ -128,8 +126,6 @@ platform:
 steps:
   - name: "alpine3.14"
     image: charlesportwoodii/alpine:3.14-build
-    depends_on:
-      - preflight
     environment:
       BUILD_IMAGE: "alpine3.14"
       BUILD_OS: Alpine
@@ -159,13 +155,6 @@ steps:
     when:
       event:
         - tag
-    depends_on:
-      - focal
-      - bionic
-      - centos7
-      - rhel7
-      - "alpine3.11"
-      - "alpine3.14"
     settings:
       bucket:
         from_secret: AWS_BUCKET
@@ -234,13 +223,6 @@ steps:
         - /usr/local/bin/update-alpine-packages
   - name: matrix_notify
     image: plugins/matrix
-    depends_on:
-      - focal
-      - bionic
-      - centos7
-      - rhel7
-      - "alpine3.11"
-      - "alpine3.14"
     settings:
       homeserver: https://matrix.erianna.com
       roomid:
@@ -267,7 +249,6 @@ steps:
       template: "Nginx packages have been uploaded to S3"
   - name: docker
     depends_on:
-      - "alpine3.14"
       - "deploy"
       - "update-alpine-packages"
     when:
