@@ -1,11 +1,14 @@
 ---
 kind: pipeline
 type: docker
-name: common
+name: build-amd64
 
 environment:
   DEFAULT_VERSION: 1.21.1
   DEFAULT_REVISION: 1
+
+platform:
+  arch: amd64
 
 steps:
   - name: preflight
@@ -17,25 +20,10 @@ steps:
       - mkdir -p build/deb
       - mkdir -p build/alpine
       - mkdir -p build/rpm
-
----
-kind: pipeline
-type: docker
-name: build-amd64
-
-depends_on:
-  - common
-
-environment:
-  DEFAULT_VERSION: 1.21.1
-  DEFAULT_REVISION: 1
-
-platform:
-  arch: amd64
-
-steps:
   - name: focal
     image: charlesportwoodii/ubuntu:20.04-build
+    depends_on:
+      - preflight
     environment:
       BUILD_IMAGE: focal
       BUILD_OS: Ubuntu
@@ -46,6 +34,8 @@ steps:
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
   - name: bionic
     image: charlesportwoodii/ubuntu:18.04-build
+    depends_on:
+      - preflight
     environment:
       BUILD_IMAGE: bionic
       BUILD_OS: Ubuntu
@@ -56,6 +46,8 @@ steps:
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
   - name: centos7
     image: charlesportwoodii/centos:7-build
+    depends_on:
+      - preflight
     environment:
       BUILD_IMAGE: centos7
       BUILD_OS: CentOS
@@ -66,6 +58,8 @@ steps:
       - mv *.rpm build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
   - name: rhel7
     image: charlesportwoodii/rhel:7-build
+    depends_on:
+      - preflight
     environment:
       BUILD_IMAGE: rhel7
       BUILD_OS: RHEL
@@ -76,6 +70,8 @@ steps:
       - mv *.rpm build/rpm/$BUILD_OS/$BUILD_OS_VERSION/x86_64
   - name: "alpine3.11"
     image: charlesportwoodii/alpine:3.11-build
+    depends_on:
+      - preflight
     environment:
       BUILD_IMAGE: "alpine3.11"
       BUILD_OS: Alpine
@@ -86,6 +82,8 @@ steps:
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/x86_64
   - name: "alpine3.14"
     image: charlesportwoodii/alpine:3.14-build
+    depends_on:
+      - preflight
     environment:
       BUILD_IMAGE: "alpine3.14"
       BUILD_OS: Alpine
@@ -94,54 +92,18 @@ steps:
       - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=1"
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/x86_64
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/x86_64
-
----
-kind: pipeline
-type: docker
-name: build-arm64
-
-depends_on:
-  - common
-
-environment:
-  DEFAULT_VERSION: 1.21.1
-  DEFAULT_REVISION: 1
-
-platform:
-  arch: arm64
-
-steps:
-  - name: "alpine3.14"
-    image: charlesportwoodii/alpine:3.14-build
-    environment:
-      BUILD_IMAGE: "alpine3.14"
-      BUILD_OS: Alpine
-      BUILD_OS_VERSION: "3.14"
-    commands:
-      - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=0"
-      - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/aarch64
-      - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/aarch64
-
----
-kind: pipeline
-type: docker
-name: deploy
-
-depends_on:
-  - common
-  - build-amd64
-  - build-arm64
-
-environment:
-  DEFAULT_VERSION: 1.21.1
-  DEFAULT_REVISION: 1
-
-steps:
   - name: deploy
     image: plugins/s3-sync
     when:
       event:
         - tag
+    depends_on:
+      - focal
+      - bionic
+      - centos7
+      - rhel7
+      - "alpine3.11"
+      - "alpine3.14"
     settings:
       bucket:
         from_secret: AWS_BUCKET
@@ -208,36 +170,95 @@ steps:
       port: 22
       script:
         - /usr/local/bin/update-alpine-packages
-  - name: matrix_notify
-    image: plugins/matrix
+
+---
+kind: pipeline
+type: docker
+name: build-arm64
+
+environment:
+  DEFAULT_VERSION: 1.21.1
+  DEFAULT_REVISION: 1
+
+platform:
+  arch: arm64
+
+steps:
+  - name: preflight
+    image: python:3-alpine
+    commands:
+      - pip3 install semver
+      - python3 genenv
+      - echo $(uname -s):$(uname -r):$(uname -v):$(uname -m)
+      - mkdir -p build/deb
+      - mkdir -p build/alpine
+      - mkdir -p build/rpm
+  - name: "alpine3.14"
+    image: charlesportwoodii/alpine:3.14-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: "alpine3.14"
+      BUILD_OS: Alpine
+      BUILD_OS_VERSION: "3.14"
+    commands:
+      - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=0"
+      - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/aarch64
+      - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/aarch64
+  - name: deploy
+    image: plugins/s3-sync
+    when:
+      event:
+        - tag
+    depends_on:
+      - "alpine3.14"
     settings:
-      homeserver: https://matrix.erianna.com
-      roomid:
-        from_secret: MATRIX_ROOM_ID
-      username:
-        from_secret: MATRIX_USER
-      password:
-        from_secret: MATRIX_PASSWORD
-  - name: matrix_notify_deploy
-    image: plugins/matrix
+      bucket:
+        from_secret: AWS_BUCKET
+      endpoint:
+        from_secret: AWS_HOST
+      access_key:
+        from_secret: AWS_ACCESS_KEY_ID
+      secret_key:
+        from_secret: AWS_SECRET_ACCESS_KEY
+      source: build/
+      path_style: true
+      target: /
+      delete: false
+      acl:
+        "*": public-read
+  - name: update-alpine-packages
     depends_on:
       - deploy
     when:
       event:
         - tag
+    image: appleboy/drone-ssh
     settings:
-      homeserver: https://matrix.erianna.com
-      roomid:
-        from_secret: MATRIX_ROOM_ID
+      host:
+        from_secret: SSH_HOST
       username:
-        from_secret: MATRIX_USER
-      password:
-        from_secret: MATRIX_PASSWORD
-      template: "Nginx packages have been uploaded to S3"
+        from_secret: SSH_USERNAME
+      key:
+        from_secret: SSH_KEY
+      port: 22
+      script:
+        - /usr/local/bin/update-alpine-packages
+
+---
+kind: pipeline
+type: docker
+name: deploy
+
+depends_on:
+  - build-amd64
+  - build-arm64
+
+platform:
+  arch: amd64
+
+steps:
   - name: docker
-    depends_on:
-      - "deploy"
-      - "update-alpine-packages"
     when:
       event:
         - tag
