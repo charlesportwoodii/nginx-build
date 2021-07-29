@@ -97,23 +97,6 @@ steps:
       port: 22
       script:
         - /usr/local/bin/update-apt-packages
-  - name: update-rpm-packages
-    depends_on:
-      - deploy
-    when:
-      event:
-        - tag
-    image: appleboy/drone-ssh
-    settings:
-      host:
-        from_secret: SSH_HOST
-      username:
-        from_secret: SSH_USERNAME
-      key:
-        from_secret: SSH_KEY
-      port: 22
-      script:
-        - /usr/local/bin/update-rpm-packages
   - name: update-alpine-packages
     depends_on:
       - deploy
