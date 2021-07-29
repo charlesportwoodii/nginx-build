@@ -202,7 +202,18 @@ platform:
   arch: amd64
 
 steps:
+  - name: preflight
+    image: python:3-alpine
+    commands:
+      - pip3 install semver
+      - python3 genenv
+      - echo $(uname -s):$(uname -r):$(uname -v):$(uname -m)
+      - mkdir -p build/deb
+      - mkdir -p build/alpine
+      - mkdir -p build/rpm
   - name: docker
+    depends_on:
+      - preflight
     when:
       event:
         - tag
