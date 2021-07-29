@@ -230,9 +230,12 @@ steps:
       password:
         from_secret: DOCKER_PASSWORD
     commands:
+      - mkdir -p ~/.docker/cli-plugins
+      - curl -Lqqs https://github.com/docker/buildx/releases/download/v0.6.0/buildx-v0.6.0.linux-arm64 -o ~/.docker/cli-plugins/docker-buildx
+      - chmod +x ~/.docker/cli-plugins/docker-buildx
       - docker buildx create --use
       - docker login -u=$username -p=$password
-      - docker buildx build --push --platform linux/arm64/v8,linux/amd64 $(for i in $(cat .envs); do echo -n "--build-arg $i "; done) -t charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//") -t charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//") --no-cache --compress --squash .
+      - docker buildx build --push --platform linux/arm64,linux/amd64 $(for i in $(cat .envs); do echo -n "--build-arg $i "; done) -t charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//") -t charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//") --no-cache --compress --squash .
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
