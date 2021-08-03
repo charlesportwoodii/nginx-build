@@ -20,18 +20,6 @@ steps:
       - mkdir -p build/deb
       - mkdir -p build/alpine
       - mkdir -p build/rpm
-  - name: bionic
-    image: charlesportwoodii/ubuntu:18.04-build
-    depends_on:
-      - preflight
-    environment:
-      BUILD_IMAGE: bionic
-      BUILD_OS: Ubuntu
-      BUILD_OS_VERSION: "18.04"
-    commands:
-      - bash -lc "make build fpm_debian OPENSSL_CI_HACK=1"
-      - mkdir -p build/deb/$BUILD_IMAGE
-      - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
   - name: focal
     image: charlesportwoodii/ubuntu:20.04-build
     depends_on:

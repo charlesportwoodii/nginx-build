@@ -87,8 +87,14 @@ openssl:
 #
 # TODO: update this to provide manual platform definitions
 ifeq ($(OPENSSL_CI_HACK),1)
+ifeq ($(shell arch),x86_64)
 	sed -i '427iGUESSOS=x86_64-whatever-linux2' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
 	sed -i '827iOUT=linux-x86_64' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
+endif
+ifeq ($(shell arch),aarch64)
+	sed -i '427iGUESSOS=aarch64-whatever-linux2' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
+	sed -i '827iOUT=linux-aarch64' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
+endif
 endif
 
 nginx:
@@ -109,7 +115,7 @@ nginx:
 
 	# Google Brotli
 	cd /tmp/nginx-$(VERSION)/modules && \
-	git clone https://github.com/eustas/ngx_brotli -b $(MODULE_BROTLI_VERSION) --depth=5 --recursive 
+	git clone https://github.com/eustas/ngx_brotli -b $(MODULE_BROTLI_VERSION) --depth=5 --recursive
 
 	# OpenResty Headers More
 	cd /tmp/nginx-$(VERSION)/modules && \
