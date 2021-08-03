@@ -160,7 +160,7 @@ steps:
       BUILD_OS: Alpine
       BUILD_OS_VERSION: "3.14"
     commands:
-      - bash -lc "apk add --no-cache luajit-2.1"
+      - bash -lc "apk add --no-cache luajit-2.1 || true"
       - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=0"
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/aarch64
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/aarch64
