@@ -41,6 +41,7 @@ steps:
       BUILD_OS: Alpine
       BUILD_OS_VERSION: "3.11"
     commands:
+      - bash -lc "apk add --no-cache luajit-2.1"
       - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=1"
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/x86_64
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/x86_64
@@ -53,6 +54,7 @@ steps:
       BUILD_OS: Alpine
       BUILD_OS_VERSION: "3.14"
     commands:
+      - bash -lc "apk add --no-cache luajit-2.1"
       - bash -lc "make clean base openssl pcre nginx fpm_alpine OPENSSL_CI_HACK=1"
       - mkdir -p build/alpine/v$BUILD_OS_VERSION/main/x86_64
       - mv *.apk build/alpine/v$BUILD_OS_VERSION/main/x86_64
