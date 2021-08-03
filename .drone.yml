@@ -207,14 +207,17 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: deploy
-
-depends_on:
-  - build-amd64
-  - build-arm64
+name: docker-amd64
 
 platform:
   arch: amd64
+
+depends_on:
+  - build-amd64
+
+environment:
+  DEFAULT_VERSION: 8.0.9
+  DEFAULT_REVISION: 1
 
 steps:
   - name: preflight
@@ -222,10 +225,6 @@ steps:
     commands:
       - pip3 install semver
       - python3 genenv
-      - echo $(uname -s):$(uname -r):$(uname -v):$(uname -m)
-      - mkdir -p build/deb
-      - mkdir -p build/alpine
-      - mkdir -p build/rpm
   - name: docker
     depends_on:
       - preflight
@@ -239,13 +238,125 @@ steps:
       password:
         from_secret: DOCKER_PASSWORD
     commands:
-      - apk add --no-cache curl
-      - mkdir -p ~/.docker/cli-plugins
-      - curl -Lqqs https://github.com/docker/buildx/releases/download/v0.6.0/buildx-v0.6.0.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
-      - chmod +x ~/.docker/cli-plugins/docker-buildx
-      - docker buildx create --use
+      - docker build -f Dockerfile $(for i in $(cat .envs); do echo -n "--build-arg $i "; done) -t charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//")-amd64 -t charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//")-amd64 --no-cache --compress --squash .
       - docker login -u=$username -p=$password
-      - docker buildx build --push --platform linux/arm64,linux/amd64 $(for i in $(cat .envs); do echo -n "--build-arg $i "; done) -t charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//") -t charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//") --no-cache --compress .
+      - docker push charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//")-amd64
+      - docker push charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//")-amd64
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+
+volumes:
+  - name: docker_sock
+    host:
+      path: /var/run/docker.sock
+
+---
+kind: pipeline
+type: docker
+name: docker-arm64
+
+platform:
+  arch: arm64
+
+depends_on:
+  - build-arm64
+
+environment:
+  DEFAULT_VERSION: 8.0.9
+  DEFAULT_REVISION: 1
+
+steps:
+  - name: preflight
+    image: python:3-alpine
+    commands:
+      - pip3 install semver
+      - python3 genenv
+  - name: docker
+    depends_on:
+      - preflight
+    when:
+      event:
+        - tag
+    image: docker
+    environment:
+      username:
+        from_secret: DOCKER_USERNAME
+      password:
+        from_secret: DOCKER_PASSWORD
+    commands:
+      - docker build -f Dockerfile $(for i in $(cat .envs); do echo -n "--build-arg $i "; done) -t charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//")-arm64 -t charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//")-arm64 --no-cache --compress --squash .
+      - docker login -u=$username -p=$password
+      - docker push charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//")-arm64
+      - docker push charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//")-arm64
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+
+volumes:
+  - name: docker_sock
+    host:
+      path: /var/run/docker.sock
+
+---
+kind: pipeline
+type: docker
+name: docker-manifest
+
+platform:
+  arch: amd64
+
+depends_on:
+  - docker-amd64
+  - docker-arm64
+
+environment:
+  DEFAULT_VERSION: 8.0.9
+  DEFAULT_REVISION: 1
+
+steps:
+  - name: preflight
+    image: python:3-alpine
+    commands:
+      - pip3 install semver
+      - python3 genenv
+  - name: manifest-full
+    image: docker
+    depends_on:
+      - preflight
+    when:
+      event:
+        - tag
+        - promote
+    environment:
+      username:
+        from_secret: DOCKER_USERNAME
+      password:
+        from_secret: DOCKER_PASSWORD
+    commands:
+      - docker login -u=$username -p=$password
+      - docker manifest create charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//") --amend charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//")-amd64 --amend charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//")-arm64
+      - docker manifest push charlesportwoodii/nginx:$(head -n1 .envs | sed "s/VERSION=//")
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+  - name: manifest-short
+    image: docker
+    depends_on:
+      - preflight
+    when:
+      event:
+        - tag
+        - promote
+    environment:
+      username:
+        from_secret: DOCKER_USERNAME
+      password:
+        from_secret: DOCKER_PASSWORD
+    commands:
+      - docker login -u=$username -p=$password
+      - docker manifest create charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//") --amend charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//")-amd64 --amend charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//")-arm64
+      - docker manifest push charlesportwoodii/nginx:$(tail -n1 .envs | sed "s/SHORT_VERSION=//")
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
