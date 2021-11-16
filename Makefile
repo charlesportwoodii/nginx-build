@@ -4,7 +4,7 @@ include .envs
 export
 
 # Dependency Versions
-PCREVERSION?=8.43
+PCREVERSION?=8.45
 OPENSSLVERSION?=1.1.1l
 VERSION?=
 RELEASEVER?=1
@@ -68,8 +68,8 @@ pcre:
 
 	# Download PCRE
 	cd /tmp/nginx-$(VERSION) && \
-	wget https://phoenixnap.dl.sourceforge.net/project/pcre/pcre/8.45/pcre-8.45.tar.gz && \
-	tar -xzf /tmp/nginx-$(VERSION)/pcre-8.45.tar.gz
+	wget https://phoenixnap.dl.sourceforge.net/project/pcre/pcre/8.$(PCREVERSION)/pcre-$(PCREVERSION).tar.gz && \
+	tar -xzf /tmp/nginx-$(VERSION)/pcre-$(PCREVERSION).tar.gz
 
 openssl:
 	mkdir -p /tmp/nginx-$(VERSION)
