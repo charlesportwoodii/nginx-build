@@ -69,7 +69,7 @@ pcre:
 	# Download PCRE
 	cd /tmp/nginx-$(VERSION) && \
 	wget https://phoenixnap.dl.sourceforge.net/project/pcre/pcre/8.45/pcre-8.45.tar.gz && \
-	tar -xzf /tmp/nginx-$(VERSION)/pcre-$(PCREVERSION).tar.gz
+	tar -xzf /tmp/nginx-$(VERSION)/pcre-8.45.tar.gz
 
 openssl:
 	mkdir -p /tmp/nginx-$(VERSION)
