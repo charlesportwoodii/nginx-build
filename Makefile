@@ -11,7 +11,7 @@ RELEASEVER?=1
 OPENSSL_CI_HACK?=0
 
 # Module versions
-MODULE_LUA_VERSION="v0.10.21rc1 "
+MODULE_LUA_VERSION="v0.10.20"
 MODULE_DEVELKIT_VERSION="v0.3.1"
 MODULE_REDIS2_VERSION="v0.15"
 MODULE_BROTLI_VERSION="v0.1.2"
@@ -234,13 +234,13 @@ pre_package:
 	# Install RestyCore Lua FFI
 	rm -rf /tmp/lua-resty-core
 
-	git clone https://github.com/openresty/lua-resty-core /tmp/lua-resty-core && \
+	git clone https://github.com/openresty/lua-resty-core -b v0.1.22 /tmp/lua-resty-core && \
 	cd /tmp/lua-resty-core && \
 	make install DESTDIR=/tmp/nginx-$(VERSION)-install LUA_VERSION=5.1
 
 	rm -rf /tmp/lua-resty-lrucache
 
-	git clone https://github.com/openresty/lua-resty-lrucache /tmp/lua-resty-lrucache && \
+	git clone https://github.com/openresty/lua-resty-lrucache -b v0.11 /tmp/lua-resty-lrucache && \
 	cd /tmp/lua-resty-lrucache && \
 	make install DESTDIR=/tmp/nginx-$(VERSION)-install LUA_VERSION=5.1
 
