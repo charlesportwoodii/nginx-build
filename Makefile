@@ -165,7 +165,7 @@ nginx:
 		--with-threads \
 		--with-pcre=pcre-$(PCREVERSION) \
 		--with-openssl=openssl-$(OPENSSLVERSION) \
-		--with-openssl-opt='enable-tls1_3 enable-ktls -fPIE --release'
+		--with-openssl-opt='enable-tls1_3 enable-ktls -fPIE -fPIC --release'
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
