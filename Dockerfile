@@ -1,4 +1,4 @@
-FROM charlesportwoodii/alpine:3.14-base
+FROM charlesportwoodii/alpine:3.15-base
 LABEL reference="https://github.com/charlesportwoodii/docker-images"
 LABEL repository="https://github.com/charlesportwoodii/nginx-build"
 LABEL maintainer="Charles R. Portwood II <charlesportwoodii@erianna.com>"

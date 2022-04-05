@@ -5,10 +5,9 @@ export
 
 # Dependency Versions
 PCREVERSION?=8.45
-OPENSSLVERSION?=1.1.1n
+OPENSSLVERSION?=3.0.2
 VERSION?=
 RELEASEVER?=1
-OPENSSL_CI_HACK?=0
 
 # Module versions
 MODULE_LUA_VERSION="v0.10.20"
@@ -81,22 +80,6 @@ openssl:
 	wget https://www.openssl.org/source/openssl-$(OPENSSLVERSION).tar.gz && \
 	tar -xf openssl-$(OPENSSLVERSION).tar.gz
 
-# Nginx uses ./config instead of ./Configure for OpenSSL's configuration
-# which doesn't provide cross-compile-prefix platform detection of platform detection fails
-# This manually injects the correct x86_64-linux platform data.
-#
-# TODO: update this to provide manual platform definitions
-ifeq ($(OPENSSL_CI_HACK),1)
-ifeq ($(shell arch),x86_64)
-	sed -i '427iGUESSOS=x86_64-whatever-linux2' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
-	sed -i '827iOUT=linux-x86_64' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
-endif
-ifeq ($(shell arch),aarch64)
-	sed -i '427iGUESSOS=aarch64-whatever-linux2' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
-	sed -i '827iOUT=linux-aarch64' /tmp/nginx-$(VERSION)/openssl-$(OPENSSLVERSION)/config
-endif
-endif
-
 nginx:
 	# Download Nginx Modules
 	mkdir -p /tmp/nginx-$(VERSION)/modules
@@ -142,7 +125,8 @@ nginx:
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	export CLFAGS=""  && \
 	./configure \
-		--with-cc-opt="-Wno-error" \
+		--with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
+		--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie' \
 		--with-compat \
 		--with-cpu-opt=generic \
 		--with-http_geoip_module \
@@ -181,7 +165,7 @@ nginx:
 		--with-threads \
 		--with-pcre=pcre-$(PCREVERSION) \
 		--with-openssl=openssl-$(OPENSSLVERSION) \
-		--with-openssl-opt='enable-tls1_3 -fPIE --release'
+		--with-openssl-opt='enable-tls1_3 enable-ktls -fPIE --release'
 
 	# Make
 	cd /tmp/nginx-$(VERSION) && \
