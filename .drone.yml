@@ -164,7 +164,7 @@ steps:
       - bash -lc "make build fpm_debian"
       - mkdir -p build/deb/$BUILD_IMAGE
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
-  - name: jammy
+  - name: jammy-arm64
     image: charlesportwoodii/ubuntu:22.04-build
     depends_on:
       - preflight
