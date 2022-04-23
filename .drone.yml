@@ -32,6 +32,18 @@ steps:
       - bash -lc "make build fpm_debian"
       - mkdir -p build/deb/$BUILD_IMAGE
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
+  - name: jammy
+    image: charlesportwoodii/ubuntu:22.04-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: jammy
+      BUILD_OS: Ubuntu
+      BUILD_OS_VERSION: "22.04"
+    commands:
+      - bash -lc "make build fpm_debian"
+      - mkdir -p build/deb/$BUILD_IMAGE
+      - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
   - name: "alpine3.14"
     image: charlesportwoodii/alpine:3.14-build
     depends_on:
@@ -65,6 +77,7 @@ steps:
         - tag
     depends_on:
       - focal
+      - jammy
       - "alpine3.14"
       - "alpine3.15"
     settings:
@@ -151,6 +164,18 @@ steps:
       - bash -lc "make build fpm_debian"
       - mkdir -p build/deb/$BUILD_IMAGE
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
+  - name: jammy
+    image: charlesportwoodii/ubuntu:22.04-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: jammy
+      BUILD_OS: Ubuntu
+      BUILD_OS_VERSION: "22.04"
+    commands:
+      - bash -lc "make build fpm_debian"
+      - mkdir -p build/deb/$BUILD_IMAGE
+      - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
   - name: "alpine3.14"
     image: charlesportwoodii/alpine:3.14-build
     depends_on:
@@ -184,6 +209,7 @@ steps:
         - tag
     depends_on:
       - focal
+      - jammy
       - "alpine3.14"
       - "alpine3.15"
     settings:
