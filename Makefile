@@ -125,7 +125,7 @@ nginx:
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	export CLFAGS=""  && \
 	./configure \
-		--with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
+		--with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
 		--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie' \
 		--with-compat \
 		--with-cpu-opt=generic \
