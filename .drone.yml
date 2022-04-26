@@ -41,6 +41,8 @@ steps:
       BUILD_OS: Ubuntu
       BUILD_OS_VERSION: "22.04"
     commands:
+      - apt update
+      - apt install --reinstall ca-certificates luajit-2.1
       - bash -lc "make build fpm_debian"
       - mkdir -p build/deb/$BUILD_IMAGE
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
@@ -173,6 +175,8 @@ steps:
       BUILD_OS: Ubuntu
       BUILD_OS_VERSION: "22.04"
     commands:
+      - apt update
+      - apt install --reinstall ca-certificates luajit-2.1
       - bash -lc "make build fpm_debian"
       - mkdir -p build/deb/$BUILD_IMAGE
       - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
