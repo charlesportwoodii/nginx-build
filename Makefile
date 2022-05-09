@@ -67,7 +67,7 @@ pcre:
 
 	# Download PCRE
 	cd /tmp/nginx-$(VERSION) && \
-	wget https://phoenixnap.dl.sourceforge.net/project/pcre/pcre/$(PCREVERSION)/pcre-$(PCREVERSION).tar.gz && \
+	wget https://versaweb.dl.sourceforge.net/project/pcre/pcre/$(PCREVERSION)/pcre-$(PCREVERSION).tar.gz && \
 	tar -xzf /tmp/nginx-$(VERSION)/pcre-$(PCREVERSION).tar.gz
 
 openssl:
