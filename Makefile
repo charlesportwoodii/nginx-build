@@ -57,7 +57,7 @@ base:
 
 	# Download Nginx
 	cd /tmp && \
-	wget -qO- http://nginx.org/download/nginx-$(VERSION).tar.gz | tar -xz
+	wget -qO-  --no-check-certificate http://nginx.org/download/nginx-$(VERSION).tar.gz | tar -xz
 
 pcre:
 	mkdir -p /tmp/nginx-$(VERSION)
@@ -77,7 +77,7 @@ openssl:
 
 	# Download OpenSSL
 	cd /tmp/nginx-$(VERSION) && \
-	wget https://www.openssl.org/source/openssl-$(OPENSSLVERSION).tar.gz && \
+	wget --no-check-certificate https://www.openssl.org/source/openssl-$(OPENSSLVERSION).tar.gz && \
 	tar -xf openssl-$(OPENSSLVERSION).tar.gz
 
 nginx:
