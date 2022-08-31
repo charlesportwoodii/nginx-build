@@ -138,7 +138,6 @@ nginx:
 		--with-http_sub_module \
 		--with-http_mp4_module \
 		--with-stream \
-		--with-stream_proxy_module \
 		--with-stream_ssl_module \
 		--with-stream-ssl-preread \
 		--with-stream_realip_module \
