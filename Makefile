@@ -138,7 +138,9 @@ nginx:
 		--with-http_sub_module \
 		--with-http_mp4_module \
 		--with-stream \
+		--with-stream_proxy_module \
 		--with-stream_ssl_module \
+		--with-stream-ssl-preread \
 		--with-stream_realip_module \
 		--with-stream_geoip_module \
 		--with-stream_ssl_preread_module \
@@ -230,6 +232,9 @@ pre_package:
 
 	mkdir -p /tmp/nginx-$(VERSION)-install/usr/local/share/lua/
 	mv /tmp/nginx-$(VERSION)-install/usr/local/lib/lua/5.1 /tmp/nginx-$(VERSION)-install/usr/local/share/lua/
+
+	# Wait until ngx-lua gets a version bump then we can remove this
+	sed '22d' /tmp/nginx-$(VERSION)-install/usr/local/share/lua/5.1/resty/core/base.lua
 
 	mkdir -p /tmp/nginx-$(VERSION)-install/etc/nginx/conf/ssl
 	openssl dhparam -out /tmp/nginx-$(VERSION)-install/etc/nginx/conf/ssl/dhparams.pem 2048
