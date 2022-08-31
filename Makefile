@@ -139,7 +139,6 @@ nginx:
 		--with-http_mp4_module \
 		--with-stream \
 		--with-stream_ssl_module \
-		--with-stream-ssl-preread \
 		--with-stream_realip_module \
 		--with-stream_geoip_module \
 		--with-stream_ssl_preread_module \
