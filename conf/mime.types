@@ -59,6 +59,7 @@ types {
     application/octet-stream              eot;
     application/octet-stream              iso img;
     application/octet-stream              msi msp msm;
+    application/octet-stream              mcworld mcstructure;
 
     audio/midi                            mid midi kar;
     audio/mpeg                            mp3;
@@ -77,4 +78,7 @@ types {
     video/x-ms-asf                        asx asf;
     video/x-ms-wmv                        wmv;
     video/x-msvideo                       avi;
+    
+    application/protobuf                  proto;
+    application/x-protobuf                proto;
 }
