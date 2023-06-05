@@ -11,6 +11,11 @@ platform:
   os: linux
   arch: amd64
 
+volumes:
+  - name: teleport-ssh
+    host:
+      path: /opt/teleport/erianna
+      
 steps:
   - name: preflight
     image: python:3-alpine
@@ -99,39 +104,43 @@ steps:
       acl:
         "*": public-read
   - name: update-apt-packages
-    depends_on:
-      - deploy
     when:
       event:
         - tag
-    image: appleboy/drone-ssh
+    image: charlesportwoodii/drone-teleport:latest
+    network_mode: host
+    volumes:
+      - name: teleport-ssh
+        path: /opt/teleport/erianna
     settings:
-      host:
-        from_secret: SSH_HOST
-      username:
-        from_secret: SSH_USERNAME
-      key:
-        from_secret: SSH_KEY
-      port: 22
+      op: connect
+      proxy: teleport.erianna.net
+      hosts:
+        - registry.teleport.erianna.net
+      username: drone
+      data_path: /opt/teleport/erianna
       script:
-        - /usr/local/bin/update-apt-packages
+        commands:
+          - /usr/local/bin/update-apt-packages
   - name: update-alpine-packages
-    depends_on:
-      - deploy
     when:
       event:
         - tag
-    image: appleboy/drone-ssh
+    image: charlesportwoodii/drone-teleport:latest
+    network_mode: host
+    volumes:
+      - name: teleport-ssh
+        path: /opt/teleport/erianna
     settings:
-      host:
-        from_secret: SSH_HOST
-      username:
-        from_secret: SSH_USERNAME
-      key:
-        from_secret: SSH_KEY
-      port: 22
+      op: connect
+      proxy: teleport.erianna.net
+      hosts:
+        - registry.teleport.erianna.net
+      username: drone
+      data_path: /opt/teleport/erianna
       script:
-        - /usr/local/bin/update-alpine-packages x86_64
+        commands:
+          - /usr/local/bin/update-alpine-packages x86_64
 
 ---
 kind: pipeline
@@ -146,6 +155,11 @@ platform:
   os: linux
   arch: arm64
 
+volumes:
+  - name: teleport-ssh
+    host:
+      path: /opt/teleport/erianna
+      
 steps:
   - name: preflight
     image: python:3-alpine
@@ -233,23 +247,25 @@ steps:
       delete: false
       acl:
         "*": public-read
-  - name: update-alpine-packages
-    depends_on:
-      - deploy
+ - name: update-alpine-packages
     when:
       event:
         - tag
-    image: appleboy/drone-ssh
+    image: charlesportwoodii/drone-teleport:latest
+    network_mode: host
+    volumes:
+      - name: teleport-ssh
+        path: /opt/teleport/erianna
     settings:
-      host:
-        from_secret: SSH_HOST
-      username:
-        from_secret: SSH_USERNAME
-      key:
-        from_secret: SSH_KEY
-      port: 22
+      op: connect
+      proxy: teleport.erianna.net
+      hosts:
+        - registry.teleport.erianna.net
+      username: drone
+      data_path: /opt/teleport/erianna
       script:
-        - /usr/local/bin/update-alpine-packages aarch64
+        commands:
+          - /usr/local/bin/update-alpine-packages aarch64
 
 ---
 kind: pipeline
