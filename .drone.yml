@@ -116,7 +116,7 @@ steps:
       op: connect
       proxy: teleport.erianna.net
       hosts:
-        - registry.teleport.erianna.net
+        - packages.teleport.erianna.net
       username: drone
       data_path: /opt/teleport/erianna
       script:
@@ -135,7 +135,7 @@ steps:
       op: connect
       proxy: teleport.erianna.net
       hosts:
-        - registry.teleport.erianna.net
+        - packages.teleport.erianna.net
       username: drone
       data_path: /opt/teleport/erianna
       script:
@@ -260,7 +260,7 @@ steps:
       op: connect
       proxy: teleport.erianna.net
       hosts:
-        - registry.teleport.erianna.net
+        - packages.teleport.erianna.net
       username: drone
       data_path: /opt/teleport/erianna
       script:
