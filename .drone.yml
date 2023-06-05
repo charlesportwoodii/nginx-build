@@ -247,7 +247,7 @@ steps:
       delete: false
       acl:
         "*": public-read
- - name: update-alpine-packages
+  - name: update-alpine-packages
     when:
       event:
         - tag
