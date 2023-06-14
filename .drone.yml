@@ -103,49 +103,7 @@ steps:
       delete: false
       acl:
         "*": public-read
-  - name: update-apt-packages
-    when:
-      event:
-        - tag
-    depends_on:
-      - deploy
-    image: charlesportwoodii/drone-teleport:latest
-    network_mode: host
-    volumes:
-      - name: teleport-ssh
-        path: /opt/teleport/erianna
-    settings:
-      op: connect
-      proxy: teleport.erianna.net
-      hosts:
-        - packages.teleport.erianna.net
-      username: drone
-      data_path: /opt/teleport/erianna
-      script:
-        commands:
-          - /usr/local/bin/update-apt-packages
-  - name: update-alpine-packages
-    depends_on:
-      - deploy
-    when:
-      event:
-        - tag
-    image: charlesportwoodii/drone-teleport:latest
-    network_mode: host
-    volumes:
-      - name: teleport-ssh
-        path: /opt/teleport/erianna
-    settings:
-      op: connect
-      proxy: teleport.erianna.net
-      hosts:
-        - packages.teleport.erianna.net
-      username: drone
-      data_path: /opt/teleport/erianna
-      script:
-        commands:
-          - /usr/local/bin/update-alpine-packages x86_64
-
+        
 ---
 kind: pipeline
 type: docker
@@ -251,12 +209,30 @@ steps:
       delete: false
       acl:
         "*": public-read
+
+---
+kind: pipeline
+type: docker
+name: update-packages
+
+platform:
+  os: linux
+  arch: amd64
+  
+depends_on:
+  - build-amd64
+  - build-arm64
+
+volumes:
+  - name: teleport-ssh
+    host:
+      path: /opt/teleport/erianna
+      
+steps:
   - name: update-apt-packages
     when:
       event:
         - tag
-    depends_on:
-      - deploy
     image: charlesportwoodii/drone-teleport:latest
     network_mode: host
     volumes:
@@ -276,8 +252,6 @@ steps:
     when:
       event:
         - tag
-    depends_on:
-      - deploy
     image: charlesportwoodii/drone-teleport:latest
     network_mode: host
     volumes:
@@ -292,8 +266,9 @@ steps:
       data_path: /opt/teleport/erianna
       script:
         commands:
+          - /usr/local/bin/update-alpine-packages x86_64
           - /usr/local/bin/update-alpine-packages aarch64
-
+          
 ---
 kind: pipeline
 type: docker
@@ -304,7 +279,7 @@ platform:
   arch: amd64
 
 depends_on:
-  - build-amd64
+  - update-packages
 
 environment:
   DEFAULT_VERSION: 1.21.6
@@ -352,7 +327,7 @@ platform:
   arch: arm64
 
 depends_on:
-  - build-arm64
+  - update-packages
 
 environment:
   DEFAULT_VERSION: 1.21.6
