@@ -135,6 +135,7 @@ nginx:
 		--with-http_gunzip_module \
 		--with-http_addition_module \
 		--with-http_v2_module \
+                --with-http_v3_module \
 		--with-http_sub_module \
 		--with-http_mp4_module \
 		--with-stream \
