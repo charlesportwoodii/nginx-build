@@ -21,6 +21,7 @@ steps:
         path: /opt/teleport/erianna
     settings:
       op: connect
+      debug: true
       proxy: teleport.erianna.net
       hosts:
         - packages.teleport.erianna.net
