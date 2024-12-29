@@ -58,18 +58,6 @@ steps:
       - mkdir -p build/deb
       - mkdir -p build/alpine
       - mkdir -p build/rpm
-  - name: focal
-    image: charlesportwoodii/ubuntu:20.04-build
-    depends_on:
-      - preflight
-    environment:
-      BUILD_IMAGE: focal
-      BUILD_OS: Ubuntu
-      BUILD_OS_VERSION: "20.04"
-    commands:
-      - bash -lc "make build fpm_debian"
-      - mkdir -p build/deb/$BUILD_IMAGE
-      - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
   - name: jammy
     image: charlesportwoodii/ubuntu:22.04-build
     depends_on:
@@ -78,6 +66,20 @@ steps:
       BUILD_IMAGE: jammy
       BUILD_OS: Ubuntu
       BUILD_OS_VERSION: "22.04"
+    commands:
+      - apt update
+      - apt install --reinstall ca-certificates luajit-2.1
+      - bash -lc "make build fpm_debian"
+      - mkdir -p build/deb/$BUILD_IMAGE
+      - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
+  - name: noble
+    image: charlesportwoodii/ubuntu:24.04-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: noble
+      BUILD_OS: Ubuntu
+      BUILD_OS_VERSION: "24.04"
     commands:
       - apt update
       - apt install --reinstall ca-certificates luajit-2.1
@@ -162,18 +164,6 @@ steps:
       - mkdir -p build/deb
       - mkdir -p build/alpine
       - mkdir -p build/rpm
-  - name: focal
-    image: charlesportwoodii/ubuntu:20.04-build
-    depends_on:
-      - preflight
-    environment:
-      BUILD_IMAGE: focal
-      BUILD_OS: Ubuntu
-      BUILD_OS_VERSION: "20.04"
-    commands:
-      - bash -lc "make build fpm_debian"
-      - mkdir -p build/deb/$BUILD_IMAGE
-      - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
   - name: jammy
     image: charlesportwoodii/ubuntu:22.04-build
     depends_on:
@@ -182,6 +172,20 @@ steps:
       BUILD_IMAGE: jammy
       BUILD_OS: Ubuntu
       BUILD_OS_VERSION: "22.04"
+    commands:
+      - apt update
+      - apt install --reinstall ca-certificates luajit-2.1
+      - bash -lc "make build fpm_debian"
+      - mkdir -p build/deb/$BUILD_IMAGE
+      - mv *$BUILD_IMAGE*.deb build/deb/$BUILD_IMAGE/
+  - name: noble
+    image: charlesportwoodii/ubuntu:24.04-build
+    depends_on:
+      - preflight
+    environment:
+      BUILD_IMAGE: noble
+      BUILD_OS: Ubuntu
+      BUILD_OS_VERSION: "24.04"
     commands:
       - apt update
       - apt install --reinstall ca-certificates luajit-2.1
