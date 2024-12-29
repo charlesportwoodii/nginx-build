@@ -118,7 +118,7 @@ steps:
       event:
         - tag
     depends_on:
-      - focal
+      - noble
       - jammy
       - "alpine3.14"
       - "alpine3.15"
@@ -224,7 +224,7 @@ steps:
       event:
         - tag
     depends_on:
-      - focal
+      - noble
       - jammy
       - "alpine3.14"
       - "alpine3.15"
