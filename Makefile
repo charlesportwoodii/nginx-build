@@ -125,8 +125,8 @@ nginx:
 	export NGX_BROTLI_STATIC_MODULE_ONLY=1 && \
 	export CLFAGS=""  && \
 	./configure \
-		--with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
-		--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--allow-multiple-definition,--as-needed -pie' \
+		--with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -fPIC' \
+		--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie' \
 		--with-compat \
 		--with-cpu-opt=generic \
 		--with-http_geoip_module \
@@ -135,7 +135,7 @@ nginx:
 		--with-http_gunzip_module \
 		--with-http_addition_module \
 		--with-http_v2_module \
-		--with-http_v3_module \
+                --with-http_v3_module \
 		--with-http_sub_module \
 		--with-http_mp4_module \
 		--with-stream \
