@@ -126,7 +126,7 @@ nginx:
 	export CLFAGS=""  && \
 	./configure \
 		--with-cc-opt='-g -O2 -fstack-protector-strong -Wformat -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
-		--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie' \
+		--with-ld-opt='-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now -Wl,--allow-multiple-definition,--as-needed -pie' \
 		--with-compat \
 		--with-cpu-opt=generic \
 		--with-http_geoip_module \
@@ -135,7 +135,7 @@ nginx:
 		--with-http_gunzip_module \
 		--with-http_addition_module \
 		--with-http_v2_module \
-                --with-http_v3_module \
+		--with-http_v3_module \
 		--with-http_sub_module \
 		--with-http_mp4_module \
 		--with-stream \
@@ -208,8 +208,7 @@ pre_package:
 	# Copy the LICENSE file
 	mkdir -p /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)
 	cp /tmp/nginx-$(VERSION)/LICENSE /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/LICENSE
-	cp /tmp/nginx-$(VERSION)/README /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/README
-	cp /tmp/nginx-$(VERSION)/CHANGES /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/CHANGES
+	cp /tmp/nginx-$(VERSION)/README /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/README.md
 
 	# Move the modules to /usr/lib/nginx instead of /etc/
 	mkdir -p /tmp/nginx-$(VERSION)-install/usr/lib/nginx

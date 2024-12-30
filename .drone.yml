@@ -38,7 +38,7 @@ type: docker
 name: build-amd64
 
 environment:
-  DEFAULT_VERSION: 1.21.6
+  DEFAULT_VERSION: 1.27.3
   DEFAULT_REVISION: 1
 
 platform:
