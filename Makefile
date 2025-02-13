@@ -208,7 +208,6 @@ pre_package:
 	# Copy the LICENSE file
 	mkdir -p /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)
 	cp /tmp/nginx-$(VERSION)/LICENSE /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/LICENSE
-	cp /tmp/nginx-$(VERSION)/README.md /tmp/nginx-$(VERSION)-install/usr/share/doc/$(RELEASENAME)/README.md
 
 	# Move the modules to /usr/lib/nginx instead of /etc/
 	mkdir -p /tmp/nginx-$(VERSION)-install/usr/lib/nginx
