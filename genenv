@@ -1,55 +1,78 @@
 #!/usr/bin/env python3
+"""Derive VERSION, RELEASEVER, PACKAGE_NAME and SHORT_VERSION from a release
+version.
+
+The version is supplied by the release workflow. There is deliberately no
+DEFAULT_VERSION fallback: it was duplicated across the Drone pipelines and
+had drifted to two different stale values (1.27.3 and 1.21.6).
+"""
 
 import argparse
 import os
+import sys
+
 import semver
 
-def run(args):
-    return exec()
+ENV_ORDER = ("VERSION", "RELEASEVER", "PACKAGE_NAME", "SHORT_VERSION")
 
-def exec():
-    tag = os.getenv("DRONE_TAG")
-    default_version = os.getenv("DEFAULT_VERSION")
-    default_revision = os.getenv("DEFAULT_REVISION")
 
-    env = {}
-    if (tag == None):
-        ver = semver.parse(default_version)
+def compute_env(version):
+    """Map a release version such as '1.29.3-1' to its build variables.
 
-        env['VERSION'] = default_version
-        env['RELEASEVER'] = default_revision
+    The semver prerelease field carries the package revision. A version
+    given without one is treated as revision 1. nginx uses even minor
+    versions for stable and odd minor versions for mainline.
+    """
+    if not version:
+        raise ValueError("version is required")
+    try:
+        parsed = semver.Version.parse(version)
+    except ValueError as exc:
+        raise ValueError("invalid version {!r}: {}".format(version, exc)) from exc
 
-        if (ver['minor'] % 2 == 0):
-            env['PACKAGE_NAME'] = "nginx"
-        else:
-            env['PACKAGE_NAME'] = "nginx-mainline"
-        
-        env['SHORT_VERSION'] = str(ver['major']) + "." + str(ver['minor'])
-    else:
-        ver = semver.parse(tag)
-        env['VERSION'] = str(ver['major']) + "." + str(ver['minor']) + "." + str(ver['patch'])
-        env['RELEASEVER'] = str(ver['prerelease'])
+    return {
+        "VERSION": "{}.{}.{}".format(parsed.major, parsed.minor, parsed.patch),
+        "RELEASEVER": parsed.prerelease if parsed.prerelease else "1",
+        "PACKAGE_NAME": "nginx" if parsed.minor % 2 == 0 else "nginx-mainline",
+        "SHORT_VERSION": "{}.{}".format(parsed.major, parsed.minor),
+    }
 
-        if (ver['minor'] % 2 == 0):
-            env['PACKAGE_NAME'] = "nginx"
-        else:
-            env['PACKAGE_NAME'] = "nginx-mainline"
-        
-        env['SHORT_VERSION'] = str(ver['major']) + "." + str(ver['minor'])
+
+def write_envs(version, path=".envs"):
+    """Write the .envs file the Makefile includes at line 3.
+
+    Line order is load-bearing: `head -n1` must be VERSION and `tail -n1`
+    must be SHORT_VERSION.
+    """
+    env = compute_env(version)
+    with open(path, "w") as handle:
+        for key in ENV_ORDER:
+            handle.write("{}={}\n".format(key, env[key]))
+    return env
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Generate the .envs file for the build"
+    )
+    parser.add_argument(
+        "version",
+        nargs="?",
+        default=os.getenv("RELEASE_VERSION"),
+        help="Release version, e.g. 1.29.3-1. Defaults to $RELEASE_VERSION.",
+    )
+    parser.add_argument("--output", default=".envs")
+    args = parser.parse_args()
 
     try:
-        os.remove(".envs")
-    except OSError:
-        pass
-    f = open('.envs', 'a')
-    for k, v in enumerate(env, start=0):
-        f.write(v + "=" + env[v] + "\n");
-    
-    f.close()
+        env = write_envs(args.version, args.output)
+    except ValueError as exc:
+        print("error: {}".format(exc), file=sys.stderr)
+        return 1
 
     print(env)
+    return 0
 
-parser = argparse.ArgumentParser(description='Generates an appropriate .envs file for populate by process')
 
-args = parser.parse_args()
-run(args)
+if __name__ == "__main__":
+    sys.exit(main())

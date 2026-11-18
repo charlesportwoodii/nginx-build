@@ -2,3 +2,7 @@
 *.deb
 *.rpm
 *.apk
+__pycache__/
+.pytest_cache/
+build/
+.superpowers/

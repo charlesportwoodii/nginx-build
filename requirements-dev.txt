@@ -1,0 +1,11 @@
+# Python dependencies for the release workflow's `setup` job and the test
+# suite. Not a scratch file: .github/workflows/release.yml installs this
+# before running the tests and computing the build matrix.
+#
+#   semver - genenv parses the release version (e.g. 8.5.9-2) with
+#            semver.Version.parse. Pinned to 3.x because the 2.x
+#            module-level semver.parse API was removed.
+#   pytest - runs tests/, which the setup job executes as a gate before
+#            emitting the matrix.
+semver>=3.0,<4.0
+pytest>=8.0

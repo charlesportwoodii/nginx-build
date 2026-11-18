@@ -1,0 +1,318 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version, e.g. 1.29.3-1'
+        required: true
+        type: string
+      dry_run:
+        description: 'Build and upload to a staging prefix. No tag, no publish, no images.'
+        required: false
+        default: false
+        type: boolean
+      images_only:
+        description: 'Skip compiling and publishing. Build and push Docker images for an already-released version.'
+        required: false
+        default: false
+        type: boolean
+      publish_timeout_minutes:
+        description: 'How long to wait for the Drone index refresh.'
+        required: false
+        default: 90
+        type: number
+
+permissions:
+  contents: write
+
+concurrency:
+  # One group for all versions, not one per version: trigger_drone.sh adopts
+  # any in-flight Drone index refresh, so a stable and a mainline release
+  # running together could each adopt a refresh that ran before their own
+  # packages were uploaded.
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  setup:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.emit.outputs.matrix }}
+      docker_matrix: ${{ steps.emit.outputs.docker_matrix }}
+      version: ${{ steps.emit.outputs.version }}
+      releasever: ${{ steps.emit.outputs.releasever }}
+      package_name: ${{ steps.emit.outputs.package_name }}
+      short_version: ${{ steps.emit.outputs.short_version }}
+      s3_prefix: ${{ steps.emit.outputs.s3_prefix }}
+      dry_run: ${{ inputs.dry_run }}
+      images_only: ${{ inputs.images_only }}
+      publish_timeout_seconds: ${{ steps.mode.outputs.publish_timeout_seconds }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - run: pip install -r requirements-dev.txt
+
+      - name: Reject contradictory inputs
+        if: ${{ inputs.dry_run && inputs.images_only }}
+        run: |
+          echo "dry_run and images_only are mutually exclusive." >&2
+          echo "dry_run skips image builds entirely, so the combination does nothing." >&2
+          exit 1
+
+      - name: Resolve publish timeout
+        id: mode
+        run: |
+          mins="${{ inputs.publish_timeout_minutes }}"
+          echo "publish_timeout_seconds=$(( ${mins:-90} * 60 ))" >> "$GITHUB_OUTPUT"
+
+      - name: Run unit tests
+        run: python -m pytest tests/ -v
+
+      - name: Emit build matrix
+        id: emit
+        run: |
+          # Run as a module: `python ci/emit_matrix.py` would put ci/ on
+          # sys.path instead of the repo root and the ci.build_matrix
+          # import would fail. An invalid version exits non-zero here,
+          # before any tag is created.
+          python -m ci.emit_matrix \
+            --version "${{ inputs.version }}" \
+            ${{ inputs.dry_run && '--dry-run' || '' }}
+
+      - name: Create tag and release
+        # images_only targets a version that is already released, so the tag
+        # exists and `gh release create` would fail on it.
+        if: ${{ !inputs.dry_run && !inputs.images_only }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # github.ref_name, not a literal branch, so a default-branch rename
+          # needs no edit here.
+          gh release create "${{ inputs.version }}" \
+            --target "${{ github.ref_name }}" \
+            --title "nginx ${{ steps.emit.outputs.version }}-${{ steps.emit.outputs.releasever }}" \
+            --generate-notes
+
+  build:
+    needs: setup
+    if: ${{ needs.setup.outputs.images_only != 'true' }}
+    strategy:
+      # Never fail-fast: cancelling sibling distros on one failure would
+      # force a rebuild of work that already succeeded.
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    runs-on: ${{ matrix.runner }}
+    name: build ${{ matrix.name }} ${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Generate .envs
+        run: |
+          # Mandatory: Makefile:3 is a hard `include .envs` followed by
+          # `export`, so make aborts if the file is missing. Written from the
+          # setup job's outputs so the build runners need no Python or semver.
+          # Line order is load-bearing: VERSION first, SHORT_VERSION last.
+          printf 'VERSION=%s\nRELEASEVER=%s\nPACKAGE_NAME=%s\nSHORT_VERSION=%s\n' \
+            '${{ needs.setup.outputs.version }}' \
+            '${{ needs.setup.outputs.releasever }}' \
+            '${{ needs.setup.outputs.package_name }}' \
+            '${{ needs.setup.outputs.short_version }}' > .envs
+          cat .envs
+
+      - name: Compile and package
+        env:
+          BUILD_IMAGE: ${{ matrix.name }}
+          BUILD_OS: ${{ matrix.build_os }}
+          BUILD_OS_VERSION: ${{ matrix.build_os_version }}
+        run: |
+          set -euo pipefail
+          mkdir -p "${{ matrix.artifact_dir }}"
+
+          # docker run, not a job `container:`. GitHub injects a glibc-linked
+          # Node binary to run JavaScript actions inside a job container,
+          # which fails on the musl-based Alpine build image.
+          if [ "${{ matrix.packaging }}" = "alpine" ]; then
+            target=fpm_alpine
+          else
+            target=fpm_debian
+          fi
+
+          docker run --rm \
+            -v "$PWD:/build" -w /build \
+            -e BUILD_IMAGE -e BUILD_OS -e BUILD_OS_VERSION \
+            "${{ matrix.image }}" \
+            bash -lc "${{ matrix.prebuild }} && make build $target"
+
+      - name: Reclaim ownership of the build output
+        run: |
+          # The container runs as root, so its output in the bind mount is
+          # root-owned. Later steps run as the runner user and would fail on mv.
+          sudo chown -R "$(id -u):$(id -g)" .
+
+      - name: Collect artifacts
+        run: |
+          set -euo pipefail
+          if [ "${{ matrix.packaging }}" = "alpine" ]; then
+            mv ./*.apk "${{ matrix.artifact_dir }}/"
+          else
+            mv ./*"${{ matrix.name }}"*.deb "${{ matrix.artifact_dir }}/"
+          fi
+          ls -lh "${{ matrix.artifact_dir }}"
+
+      - name: Fail if nothing was produced
+        run: |
+          count=$(find "${{ matrix.artifact_dir }}" -type f | wc -l)
+          echo "produced $count artifact(s)"
+          test "$count" -gt 0
+
+      - name: Upload to Spaces
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          BUCKET: ${{ secrets.AWS_BUCKET }}
+        run: |
+          set -euo pipefail
+          command -v aws >/dev/null 2>&1 || {
+            sudo apt-get update -qq && sudo apt-get install -y -qq awscli
+          }
+          # public-read keeps the ACL the Drone s3-sync plugin applied.
+          aws s3 cp "${{ matrix.artifact_dir }}/" \
+            "s3://$BUCKET/${{ needs.setup.outputs.s3_prefix }}${{ matrix.s3_key }}/" \
+            --endpoint-url=https://nyc3.digitaloceanspaces.com \
+            --acl public-read \
+            --recursive
+
+  publish:
+    needs: [setup, build]
+    if: ${{ needs.setup.outputs.dry_run != 'true' && needs.setup.outputs.images_only != 'true' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Refresh apt and Alpine indexes via Drone
+        env:
+          DRONE_SERVER: ${{ secrets.DRONE_SERVER }}
+          DRONE_TOKEN: ${{ secrets.DRONE_TOKEN }}
+          DRONE_REPO: ${{ github.repository }}
+          DRONE_BRANCH: ${{ github.ref_name }}
+          TIMEOUT_SECONDS: ${{ needs.setup.outputs.publish_timeout_seconds }}
+        # Invoked via bash: the file was authored on Windows, so the
+        # executable bit is not reliably recorded in git.
+        run: bash ci/trigger_drone.sh
+
+  docker:
+    # publish, not just build: the Dockerfile installs nginx from the apk
+    # repository, so the index must be regenerated first.
+    needs: [setup, build, publish]
+    # images_only skips build and publish; a skipped `needs` would skip this
+    # job too unless it opts out with !cancelled() and states the real
+    # requirement. A *failed* publish still blocks images.
+    if: >-
+      ${{ !cancelled()
+      && needs.setup.result == 'success'
+      && needs.setup.outputs.dry_run != 'true'
+      && (needs.setup.outputs.images_only == 'true' || needs.build.result == 'success')
+      && (needs.setup.outputs.images_only == 'true' || needs.publish.result == 'success') }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.docker_matrix) }}
+    runs-on: ${{ matrix.runner }}
+    name: image ${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/${{ matrix.arch }}
+          # --squash and --compress have no BuildKit equivalent and are
+          # dropped. --no-cache is kept from the Drone build.
+          no-cache: true
+          # Provenance attestations add manifests that confuse
+          # imagetools create when merging by digest.
+          provenance: false
+          # PACKAGE_NAME is required: without it the Dockerfile falls back
+          # to nginx-mainline, and its `apk add ...; exit 0` hides a miss.
+          build-args: |
+            VERSION=${{ needs.setup.outputs.version }}
+            RELEASEVER=${{ needs.setup.outputs.releasever }}
+            PACKAGE_NAME=${{ needs.setup.outputs.package_name }}
+            SHORT_VERSION=${{ needs.setup.outputs.short_version }}
+          outputs: type=image,name=charlesportwoodii/nginx,push-by-digest=true,name-canonical=true,oci-mediatypes=true,push=true
+
+      - name: Export the digest
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/digests
+          digest='${{ steps.build.outputs.digest }}'
+          test -n "$digest"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: digest-${{ matrix.arch }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  docker-merge:
+    needs: [setup, docker]
+    # Skip-propagation is transitive, so this job must opt out on its own
+    # and state what it requires: the image jobs succeeded.
+    if: ${{ !cancelled() && needs.setup.result == 'success' && needs.docker.result == 'success' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digest-*
+          merge-multiple: true
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Create the multi-arch manifest
+        working-directory: /tmp/digests
+        run: |
+          set -euo pipefail
+          # Refuse to publish a single-arch manifest over a working
+          # multi-arch tag if one image job was skipped.
+          test "$(ls -1 | wc -l)" -eq 2
+          docker buildx imagetools create \
+            -t "charlesportwoodii/nginx:${{ needs.setup.outputs.version }}" \
+            -t "charlesportwoodii/nginx:${{ needs.setup.outputs.short_version }}" \
+            $(printf 'charlesportwoodii/nginx@sha256:%s ' *)
+
+      - name: Verify both platforms are present
+        run: |
+          set -euo pipefail
+          out=$(docker buildx imagetools inspect \
+            "charlesportwoodii/nginx:${{ needs.setup.outputs.version }}")
+          echo "$out"
+          echo "$out" | grep -q 'linux/amd64'
+          echo "$out" | grep -q 'linux/arm64'
