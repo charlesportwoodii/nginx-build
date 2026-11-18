@@ -5,7 +5,7 @@ export
 
 # Dependency Versions
 PCREVERSION?=8.45
-OPENSSLVERSION?=3.2.5
+OPENSSLVERSION?=4.1.0
 VERSION?=
 RELEASEVER?=1
 
@@ -67,7 +67,7 @@ pcre:
 
 	# Download PCRE
 	cd /tmp/nginx-$(VERSION) && \
-	wget --no-check-certificate https://versaweb.dl.sourceforge.net/project/pcre/pcre/$(PCREVERSION)/pcre-$(PCREVERSION).tar.gz && \
+	wget --no-check-certificate -O pcre-$(PCREVERSION).tar.gz https://downloads.sourceforge.net/project/pcre/pcre/$(PCREVERSION)/pcre-$(PCREVERSION).tar.gz && \
 	tar -xzf /tmp/nginx-$(VERSION)/pcre-$(PCREVERSION).tar.gz
 
 openssl:
